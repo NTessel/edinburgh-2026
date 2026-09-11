@@ -1,2 +1,2 @@
 # edinburgh-2026
-Mannenweekend 2025
+Mannenweekend 2026
