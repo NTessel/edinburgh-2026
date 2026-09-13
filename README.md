@@ -25,6 +25,9 @@ images/                 de illustraties en portretten
 | De elf mannen | `MANNEN` |
 | Programma per dag | `PROGRAMMA` |
 | Programma tonen of "volgt nog" | `PROGRAMMA_ZICHTBAAR` |
+
+De paklijst staat voorlopig als tekstblokje in `index.html` (zoek op `paklijst`).
+Zeg het als je er een echte aanvinkbare lijst van wilt.
 | Gedeelde sneuvelkoning aanzetten | `SNEUVEL_DB` |
 | De scheidsrechterscode | `SCHEIDSRECHTER_HASH` |
 | Terugvalkoers als de bronnen plat liggen | `KOERS_GBP_EUR` |

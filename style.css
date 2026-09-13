@@ -100,13 +100,24 @@ img{ max-width: 100%; height: auto; display: block; }
   top: 0;
   z-index: 40;
   background: var(--paper);
-  /* OORZAAK 2: met viewport-fit=cover loopt de pagina door tot onder de
-     statusbalk. Zonder deze padding scrolt de inhoud zichtbaar bóven de
-     balk langs — vooral als je de site vanaf je beginscherm opent. */
+  /* Met viewport-fit=cover loopt de pagina door tot onder de statusbalk. */
   padding-top: env(safe-area-inset-top);
   padding-left:  env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
   border-bottom: 1px solid var(--paper-edge);
+}
+/* Papierstrook die boven de balk uitsteekt. Staat de balk netjes tegen de
+   bovenkant, dan valt deze buiten beeld en zie je hem niet. Blijft er een
+   strook over — safe area, of Safari dat zijn adresbalk in- en uitklapt —
+   dan is die strook papier in plaats van doorscrollende inhoud. */
+.nav::before{
+  content:"";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 100%;
+  height: 160px;
+  background: var(--paper);
+  pointer-events: none;
 }
 /* handgetekend lijntje onder de nav */
 .nav::after{
@@ -543,6 +554,13 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
   padding: 18px 16px 16px;
   transform: rotate(-.6deg);
 }
+.binnenkort__icoon{
+  display: block;
+  width: 30px; height: 30px;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.binnenkort__icoon svg{ width: 100%; height: 100%; display: block; }
 .binnenkort__kop{
   font-family: var(--font-hand);
   font-size: 30px;

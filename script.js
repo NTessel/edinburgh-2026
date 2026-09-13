@@ -165,13 +165,12 @@ function icoonSvg(naam){
 
 /* ═══════════ 1. COUNTDOWN ═══════════ */
 (function countdown(){
-  const d = $("#cd-d"), h = $("#cd-h"), m = $("#cd-m"), note = $("#cd-note");
+  const d = $("#cd-d"), h = $("#cd-h"), m = $("#cd-m");
   if (!d) return;
   function tik(){
     let diff = VERTREK - Date.now();
     if (diff <= 0){
       d.textContent = "0"; h.textContent = "0"; m.textContent = "0";
-      note.textContent = "Slàinte mhath — we zijn onderweg.";
       return;
     }
     const min = Math.floor(diff / 60000);
@@ -771,6 +770,12 @@ window.codeHash = codeHash;
   sluit.addEventListener("click", dicht);
   box.addEventListener("click", (e) => { if (e.target === box || e.target === stage) dicht(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.hidden) dicht(); });
+})();
+
+/* ═══════════ 9b. PAKLIJST-ICOON ═══════════ */
+(function paklijstIcoon(){
+  const plek = $("#paklijst-icoon");
+  if (plek) plek.innerHTML = icoonSvg("koffer");
 })();
 
 /* ═══════════ 10. NAVIGATIE ═══════════ */
