@@ -32,15 +32,30 @@
 
 <!-- ══════════ NAVIGATIE ══════════ -->
 <nav class="nav" id="nav" aria-label="Secties">
-  <ul class="nav__list">
-    <li><a href="#top">Start</a></li>
-    <li><a href="#mannen">De mannen</a></li>
-    <li><a href="#weer">Weer</a></li>
-    <li><a href="#programma">Programma</a></li>
-    <li><a href="#sneuvel">Sneuvelkoning</a></li>
-    <li><a href="#kaart">Kaart</a></li>
-    <li><a href="#pond">Pond</a></li>
-  </ul>
+  <div class="nav__bar">
+    <span class="nav__here" id="nav-here">Edinburgh 2026</span>
+    <button class="nav__toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel">
+      <svg class="nav__burger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+           stroke-linecap="round" aria-hidden="true">
+        <path d="M4.2 7.4c5.2-.5 10.4-.6 15.6-.2"/>
+        <path d="M4.4 12.1c5.1-.4 10.2-.4 15.3.1"/>
+        <path d="M4.2 16.8c5.2-.5 10.4-.5 15.6 0"/>
+      </svg>
+      <span class="nav__togglelabel">Menu</span>
+    </button>
+  </div>
+  <div class="nav__panel" id="nav-panel" hidden>
+    <ul class="nav__list">
+      <li><a href="#top">Start</a></li>
+      <li><a href="#begin">Hoe het begon</a></li>
+      <li><a href="#mannen">De mannen</a></li>
+      <li><a href="#weer">Het weer</a></li>
+      <li><a href="#programma">Het programma</a></li>
+      <li><a href="#sneuvel">De sneuvelkoning</a></li>
+      <li><a href="#kaart">De kaart</a></li>
+      <li><a href="#pond">Pond &amp; euro</a></li>
+    </ul>
+  </div>
 </nav>
 
 <main>
@@ -138,15 +153,21 @@
   <section class="sec" id="programma">
     <div class="wrap">
       <h2 class="sec__title">Het programma</h2>
-      <p class="lede">Onder voorbehoud van voortschrijdend inzicht, vertraagde treinen en een laatste rondje. Tijden mogen schuiven, de richting niet.</p>
 
       <figure class="illu illu--pub">
         <img src="images/illu-pub.jpg" alt="Aquarel van een Schots pubpand met het bord The Old Tartan"
              width="900" height="672" loading="lazy" decoding="async" data-fallback="hide">
       </figure>
 
-      <div class="tabs" id="day-tabs" role="tablist" aria-label="Dagen"></div>
-      <div class="days" id="days"></div>
+      <div class="binnenkort">
+        <p class="binnenkort__kop">Achter gesloten deuren</p>
+        <p>Twee organisatoren bepalen alles. Geen inspraak, geen stemming,
+          geen beroep mogelijk. Zodra zij eruit zijn, staat het hier.</p>
+        <p class="binnenkort__klein">Wat je alvast mag weten: vrijdag heen, zondag terug,
+          en ergens daartussen een kasteel. De rest hoor je vanzelf.</p>
+      </div>
+      <div class="tabs" id="day-tabs" role="tablist" aria-label="Dagen" hidden></div>
+      <div class="days" id="days" hidden></div>
     </div>
   </section>
 
@@ -155,8 +176,8 @@
   <section class="sec" id="sneuvel">
     <div class="wrap">
       <h2 class="sec__title">De sneuvelkoning</h2>
-      <p class="lede">De ranglijst van wie er het slechtst aan toe is. Bovenaan staat de
-        regerend sneuvelkoning. Iedereen ziet dezelfde stand; de scheidsrechter schuift.</p>
+      <p class="lede">Bovenaan staat wie er het slechtst aan toe is. Wie zondagavond nog
+        steeds bovenaan staat, mag het de rest van zijn leven uitleggen.</p>
 
       <figure class="illu illu--whisky">
         <img src="images/illu-whisky.jpg" alt="Aquarel van een fles Scotch whisky met een glas"
@@ -199,6 +220,9 @@
   <section class="sec" id="pond">
     <div class="wrap">
       <h2 class="sec__title sec__title--tilt-b">Pond &amp; euro</h2>
+      <p class="lede">Om half drie aan de bar is niemand meer goed in hoofdrekenen, en toch
+        staat er altijd iemand te roepen dat het &ldquo;ongeveer hetzelfde&rdquo; is.
+        Dat is het niet. Typ het bedrag, dan hoeft er niet gegokt te worden.</p>
       <div class="fx">
         <div class="fx__row">
           <label class="fx__field">
@@ -209,13 +233,7 @@
           <span class="fx__eq" aria-hidden="true">=</span>
           <p class="fx__out" id="fx-eur" aria-live="polite">&euro; 12,00</p>
         </div>
-        <div class="fx__quick" id="fx-quick"></div>
-        <p class="fx__rate">
-          <label for="fx-rate">Koers: &pound;1 =</label>
-          <input id="fx-rate" type="text" inputmode="decimal" autocomplete="off" value="1,20">
-          <span>euro</span>
-        </p>
-        <p class="fx__hint">Koers klopt niet meer? Pas hem hierboven aan, hij wordt onthouden.</p>
+        <p class="fx__rate" id="fx-rate">Koers wordt opgehaald&hellip;</p>
       </div>
     </div>
   </section>

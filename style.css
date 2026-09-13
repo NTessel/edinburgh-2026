@@ -34,6 +34,11 @@
 
 *, *::before, *::after{ box-sizing: border-box; }
 
+/* hidden moet ALTIJD verbergen. Zonder !important wint elke eigen
+   display-regel hieronder van de browserregel [hidden]{display:none},
+   en dan blijft een verborgen knop gewoon staan. */
+[hidden]{ display: none !important; }
+
 html{
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
@@ -47,7 +52,6 @@ body{
   font-family: var(--font-body);
   font-size: 17px;                   /* nooit onder 16px */
   line-height: 1.62;
-  overflow-x: clip;                  /* nooit horizontaal scrollen */
   -webkit-font-smoothing: antialiased;
 }
 
@@ -62,6 +66,10 @@ body::before{
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
 }
+
+/* Clippen doen we op de inhoud, niet op body: overflow op een voorouder van
+   een sticky element breekt de sticky-header in Safari. */
+main, .footer, .bleed{ overflow-x: clip; }
 
 img{ max-width: 100%; height: auto; display: block; }
 :where(a){ color: var(--ink); text-decoration-color: rgba(186,118,52,.6); text-underline-offset: 3px; }
@@ -92,6 +100,10 @@ img{ max-width: 100%; height: auto; display: block; }
   top: 0;
   z-index: 40;
   background: var(--paper);
+  /* OORZAAK 2: met viewport-fit=cover loopt de pagina door tot onder de
+     statusbalk. Zonder deze padding scrolt de inhoud zichtbaar bóven de
+     balk langs — vooral als je de site vanaf je beginscherm opent. */
+  padding-top: env(safe-area-inset-top);
   padding-left:  env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
   border-bottom: 1px solid var(--paper-edge);
@@ -102,37 +114,81 @@ img{ max-width: 100%; height: auto; display: block; }
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='4'%3E%3Cpath d='M0 2.4C40 .8 70 3.4 110 2 150 .6 186 3.6 240 1.8' fill='none' stroke='%235B4F49' stroke-width='1' stroke-linecap='round' opacity='.45'/%3E%3C/svg%3E") repeat-x;
   pointer-events:none;
 }
-.nav__list{
-  display: flex;
-  gap: 2px;
-  margin: 0;
-  padding: 0 10px;
-  list-style: none;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-.nav__list::-webkit-scrollbar{ display: none; }
-.nav__list a{
+.nav__bar{
   display: flex;
   align-items: center;
-  min-height: 44px;                  /* tikvlak */
+  justify-content: space-between;
+  gap: 10px;
   height: var(--nav-h);
-  padding: 0 12px;
-  white-space: nowrap;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  text-decoration: none;
-  position: relative;
+  padding-left:  max(var(--gut), 0px);
+  padding-right: 6px;
 }
-.nav__list a.is-active{ color: var(--ink); }
-.nav__list a.is-active::after{     /* zacht amber vlekje, geen strak blokje */
-  content:""; position:absolute; left:6px; right:6px; bottom:7px; height: 9px;
-  background: radial-gradient(60% 100% at 40% 50%, rgba(219,161,74,.65), rgba(219,161,74,0) 70%),
-              radial-gradient(70% 100% at 70% 45%, rgba(186,118,52,.45), rgba(186,118,52,0) 72%);
+.nav__here{
+  font-family: var(--font-hand);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: rotate(-1deg);
+}
+.nav__toggle{
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid rgba(36,26,24,.38);
   border-radius: var(--brush-s);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav__burger{ width: 22px; height: 22px; display: block; }
+.nav__toggle[aria-expanded="true"]{
+  border-color: var(--ink);
+  background:
+    radial-gradient(66% 74% at 40% 44%, rgba(219,161,74,.5), rgba(219,161,74,0) 74%),
+    radial-gradient(60% 66% at 72% 62%, rgba(186,118,52,.34), rgba(186,118,52,0) 76%);
+}
+
+.nav__panel{
+  border-top: 1px solid var(--paper-edge);
+  background: var(--paper);
+  max-height: calc(100dvh - var(--nav-h) - 20px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nav__list{
+  margin: 0;
+  padding: 6px max(var(--gut), 0px) 10px;
+  list-style: none;
+}
+.nav__list li + li{ border-top: 1px dashed rgba(91,79,73,.28); }
+.nav__list a{
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 52px;                  /* ruim tikvlak */
+  padding: 6px 10px;
+  font-family: var(--font-hand);
+  font-size: 26px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nav__list a.is-active{ font-weight: 700; }
+.nav__list a.is-active::before{     /* zacht amber vlekje, geen strak blokje */
+  content:""; position:absolute; left:0; right:0; top:5px; bottom:5px; z-index:-1;
+  border-radius: var(--brush-a);
+  background:
+    radial-gradient(52% 74% at 24% 44%, rgba(219,161,74,.42), rgba(219,161,74,0) 74%),
+    radial-gradient(58% 68% at 70% 60%, rgba(186,118,52,.26), rgba(186,118,52,0) 76%);
 }
 
 /* ─────────────── SECTIES ─────────────── */
@@ -420,7 +476,6 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
 .tab[aria-selected="true"]::before{ opacity: 1; }
 .tab:active{ transform: translateY(1px); }
 
-.day[hidden]{ display: none; }
 
 .timeline{ position: relative; list-style: none; margin: 0; padding: 0; }
 .timeline__line{
@@ -480,6 +535,25 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
   color: var(--amber-deep);
   margin-left: 8px;
 }
+
+.binnenkort{
+  border: 1px solid rgba(36,26,24,.32);
+  border-radius: var(--brush-b);
+  background: rgba(241,234,219,.5);
+  padding: 18px 16px 16px;
+  transform: rotate(-.6deg);
+}
+.binnenkort__kop{
+  font-family: var(--font-hand);
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  transform: rotate(.8deg);
+  transform-origin: left center;
+}
+.binnenkort p{ margin: 0 0 10px; font-size: 16.5px; }
+.binnenkort p:last-child{ margin-bottom: 0; }
+.binnenkort__klein{ color: var(--ink-soft); font-style: italic; }
 
 /* ─────────────── 5a. CLANPORTRET (polaroid) ─────────────── */
 .polaroid{ margin: 0 0 6px; }
@@ -728,9 +802,6 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-/* zonder deze regel wint display:flex hierboven van de browserregel
-   [hidden]{display:none} en blijft de overlay staan na een tik */
-.map__veil[hidden]{ display: none; }
 .map__veiltext{
   font-family: var(--font-hand);
   font-size: 24px;
@@ -821,52 +892,12 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
   text-align: right;
   word-break: break-word;
 }
-.fx__quick{ display: flex; gap: 8px; margin: 0 0 12px; }
-.fx__btn{
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 48px;
-  border: 1px solid rgba(36,26,24,.4);
-  border-radius: var(--brush-s);
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-hand);
-  font-size: 24px;
-  font-weight: 700;
-  cursor: pointer;
-  position: relative;
-  -webkit-tap-highlight-color: transparent;
-}
-.fx__btn:nth-child(even){ border-radius: var(--brush-b); }
-.fx__btn::before{
-  content:""; position:absolute; inset:-2px -4px -5px; z-index:-1; opacity:0;
-  border-radius: var(--brush-a);
-  background: radial-gradient(60% 80% at 50% 60%, rgba(219,161,74,.6), rgba(219,161,74,0) 74%);
-  transition: opacity .18s ease;
-}
-.fx__btn:active::before{ opacity: 1; }
 .fx__rate{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 0 0 6px;
+  margin: 0;
   font-size: 16px;
   color: var(--ink-soft);
+  font-style: italic;
 }
-.fx__rate input{
-  width: 84px;
-  min-height: 44px;
-  padding: 6px 10px;
-  border: 1px solid rgba(36,26,24,.35);
-  border-radius: var(--brush-s);
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: 16px;                   /* iOS zoomt niet in */
-  font-weight: 700;
-}
-.fx__hint{ margin: 0; font-size: 16px; color: var(--ink-soft); font-style: italic; }
 
 .notepad{
   border: 1px solid rgba(36,26,24,.32);
@@ -940,7 +971,6 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
   display: flex; align-items: center; justify-content: center;
   padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
 }
-.lightbox[hidden]{ display: none; }
 .lightbox__stage{
   max-width: 100%; max-height: 100%;
   overflow: auto;

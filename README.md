@@ -24,9 +24,10 @@ images/                 de illustraties en portretten
 | Vertrekmoment voor de countdown | `VERTREK` |
 | De elf mannen | `MANNEN` |
 | Programma per dag | `PROGRAMMA` |
+| Programma tonen of "volgt nog" | `PROGRAMMA_ZICHTBAAR` |
 | Gedeelde sneuvelkoning aanzetten | `SNEUVEL_DB` |
 | De scheidsrechterscode | `SCHEIDSRECHTER_HASH` |
-| Wisselkoers en snelknoppen | `KOERS_GBP_EUR`, `FX_SNELKEUZE` |
+| Terugvalkoers als de bronnen plat liggen | `KOERS_GBP_EUR` |
 | Middelpunt van de kaart | `KAART_MIDDEN`, `KAART_ZOOM` |
 | Klimaatcijfers + de droge opmerking | `KLIMAAT`, `WEER_OPMERKING` |
 
@@ -49,6 +50,11 @@ Elk item ziet er zo uit:
 
 Verandert een dátum? Pas dan ook `datum: [2026, 9, 2]` aan —
 dat is `[jaar, maand−1, dag]`, dus **9 = oktober**.
+
+### Het programma tonen
+Zolang `PROGRAMMA_ZICHTBAAR` op `false` staat, ziet iedereen het blokje
+"Wordt nog gesmeed". De tijdlijn in `PROGRAMMA` staat er al helemaal klaar bij.
+Zet hem op `true` zodra het programma vaststaat, en alles verschijnt in één keer.
 
 ### De sneuvelkoning
 De ranglijst gebruikt dezelfde namen als `MANNEN`. Voeg je iemand toe, dan komt
@@ -306,7 +312,12 @@ Zo zie je meteen hoe het écht op een telefoon oogt. Stoppen doe je met `Ctrl-C`
 
 - **De sneuvelkoning** staat in `localStorage` zolang je `SNEUVEL_DB` leeg laat,
   dus per telefoon. Zet je hem aan, dan staat de stand centraal — zie punt 6.
-- **De wisselkoers** die je zelf instelt wordt per telefoon onthouden.
+- **De wisselkoers** wordt automatisch opgehaald bij open.er-api.com, met
+  frankfurter.dev als reserve. Lukt geen van beide, dan gebruikt de site de
+  laatst opgehaalde koers, en anders `KOERS_GBP_EUR`. Er verschijnt nooit een
+  foutmelding; onder het bedrag staat altijd van welke dag de koers is.
+- **Het menu** zit achter de hamburgerknop rechtsboven, zodat alle secties er
+  altijd in passen. De balk zelf toont waar je bent.
 - **Het weer** komt van Open-Meteo, zonder API-key. Tot veertien dagen voor
   vertrek toont de site de oktobergemiddelden; daarna schakelt hij vanzelf over
   naar de echte verwachting voor 2, 3 en 4 oktober. Doet de API het even niet,

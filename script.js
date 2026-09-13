@@ -17,6 +17,10 @@ const MANNEN = [
   "ruben", "maarten", "koen", "jeroen", "wouter"
 ];
 
+/* Staat het programma al vast? Zet op true zodra je het wilt tonen; de
+   tijdlijn hieronder staat klaar. Op false zie je het "volgt nog"-blokje. */
+const PROGRAMMA_ZICHTBAAR = false;
+
 /* ── HET PROGRAMMA ───────────────────────────────────────────────────────
    Per dag: label voor de tab, de datum (jaar, maand-1, dag) en de items.
    icoon: trein · vliegtuig · koffer · bed · kasteel · bord · rugby ·
@@ -94,8 +98,17 @@ const SCHEIDSRECHTER_HASH = "336b5947";
 /* ── WISSELKOERS ─────────────────────────────────────────────────────────
    Startwaarde voor de omrekentool. Je kunt de koers ook op de site zelf
    aanpassen; die aanpassing wordt op je telefoon onthouden.               */
-const KOERS_GBP_EUR = 1.20;
-const FX_SNELKEUZE = [5, 10, 20, 50];      // knopjes voor veelgebruikte bedragen
+const KOERS_GBP_EUR = 1.17;                // alleen als terugval, zie hieronder
+
+/* De koers wordt automatisch opgehaald. Twee bronnen, allebei gratis en zonder
+   sleutel; lukt de eerste niet, dan wordt de tweede geprobeerd. Lukt geen van
+   beide, dan de laatst opgehaalde koers, en anders KOERS_GBP_EUR hierboven. */
+const KOERS_BRONNEN = [
+  { url: "https://open.er-api.com/v6/latest/GBP",
+    lees: (d) => ({ koers: d.rates && d.rates.EUR, datum: d.time_last_update_utc }) },
+  { url: "https://api.frankfurter.dev/v1/latest?base=GBP&symbols=EUR",
+    lees: (d) => ({ koers: d.rates && d.rates.EUR, datum: d.date }) }
+];
 
 /* ── KLIMAAT & DROGE OPMERKING ─────────────────────────────────────────── */
 const KLIMAAT = {
@@ -279,6 +292,10 @@ function klimaatBlok(extraRegel){
 (function programma(){
   const tabs = $("#day-tabs"), dagen = $("#days");
   if (!tabs) return;
+  if (!PROGRAMMA_ZICHTBAAR) return;      // het "volgt nog"-blokje staat al in de HTML
+  $(".binnenkort").hidden = true;
+  tabs.hidden = false;
+  dagen.hidden = false;
 
   const alles = [];
   PROGRAMMA.forEach((dag, di) => {
@@ -581,7 +598,7 @@ window.codeHash = codeHash;
 
   lijst.addEventListener("click", (e) => {
     const b = e.target.closest("button");
-    if (!b || b.disabled) return;
+    if (!b || b.disabled || !magSchuiven) return;
     if (b.dataset.op   !== undefined) wissel(Number(b.dataset.op), Number(b.dataset.op) - 1);
     if (b.dataset.neer !== undefined) wissel(Number(b.dataset.neer), Number(b.dataset.neer) + 1);
   });
@@ -599,6 +616,7 @@ window.codeHash = codeHash;
   });
 
   knopReset.addEventListener("click", () => {
+    if (!magSchuiven) return;          // alleen de scheidsrechter
     if (!confirm("De ranglijst terugzetten op de oorspronkelijke volgorde?")) return;
     volgorde = MANNEN.slice();
     lokaalBewaren();
@@ -671,7 +689,7 @@ window.codeHash = codeHash;
 
 /* ═══════════ 8. POND NAAR EURO ═══════════ */
 (function wisselkoers(){
-  const gbp = $("#fx-gbp"), uit = $("#fx-eur"), koersVeld = $("#fx-rate"), snel = $("#fx-quick");
+  const gbp = $("#fx-gbp"), uit = $("#fx-eur"), regel = $("#fx-rate");
   if (!gbp) return;
   const KEY = "edi26.koers";
 
@@ -680,42 +698,49 @@ window.codeHash = codeHash;
     const n = parseFloat(String(v).replace(",", ".").replace(/[^0-9.]/g, ""));
     return isFinite(n) ? n : NaN;
   };
-  const toon = (n) => n.toFixed(2).replace(".", ",");
+  const toon = (n, d) => n.toFixed(d === undefined ? 2 : d).replace(".", ",");
 
   let koers = KOERS_GBP_EUR;
+  let herkomst = "geschatte koers";
+
+  // laatst opgehaalde koers alvast gebruiken, zodat er meteen iets goeds staat
   try {
-    const bewaard = lees(localStorage.getItem(KEY));
-    if (bewaard > 0) koers = bewaard;
+    const bewaard = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (bewaard && bewaard.koers > 0){
+      koers = bewaard.koers;
+      herkomst = "koers van " + bewaard.datum;
+    }
   } catch(e){ /* privemodus */ }
-  koersVeld.value = toon(koers);
 
   function reken(){
     const p = lees(gbp.value);
     uit.textContent = isFinite(p) ? "\u20AC " + toon(p * koers) : "\u20AC –";
+    regel.textContent = "\u00A31 = \u20AC" + toon(koers, 3) + " \u00B7 " + herkomst;
   }
 
   gbp.addEventListener("input", reken);
-  koersVeld.addEventListener("input", () => {
-    const k = lees(koersVeld.value);
-    if (k > 0){
-      koers = k;
-      try { localStorage.setItem(KEY, String(k)); } catch(e){}
-    }
-    reken();
-  });
-
-  // snelknoppen voor een rondje aan de bar
-  snel.innerHTML = FX_SNELKEUZE.map(b =>
-    '<button class="fx__btn" type="button" data-b="' + b + '">\u00A3' + b + '</button>'
-  ).join("");
-  snel.addEventListener("click", (e) => {
-    const b = e.target.closest("button");
-    if (!b) return;
-    gbp.value = b.dataset.b;
-    reken();
-  });
-
   reken();
+
+  /* Koers ophalen. Mislukt het, dan blijft gewoon staan wat er stond —
+     geen foutmelding in beeld. */
+  (async () => {
+    for (const bron of KOERS_BRONNEN){
+      try {
+        const r = await fetch(bron.url, { cache: "no-store" });
+        if (!r.ok) continue;
+        const { koers: k, datum } = bron.lees(await r.json());
+        if (!(k > 0)) continue;
+        const dag = new Date(datum);
+        const leesbaar = isNaN(dag) ? String(datum)
+          : dag.toLocaleDateString("nl-NL", { day: "numeric", month: "long" });
+        koers = k;
+        herkomst = "koers van " + leesbaar;
+        try { localStorage.setItem(KEY, JSON.stringify({ koers: k, datum: leesbaar })); } catch(e){}
+        reken();
+        return;
+      } catch(e){ /* volgende bron proberen */ }
+    }
+  })();
 })();
 
 /* ═══════════ 9. LIGHTBOX (clanportret) ═══════════ */
@@ -748,16 +773,44 @@ window.codeHash = codeHash;
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.hidden) dicht(); });
 })();
 
-/* ═══════════ 10. ACTIEVE SECTIE IN DE NAVIGATIE ═══════════ */
-(function scrollspy(){
+/* ═══════════ 10. NAVIGATIE ═══════════ */
+(function navigatie(){
+  const knop = $("#nav-toggle"), paneel = $("#nav-panel"), hier = $("#nav-here");
   const links = $$(".nav__list a");
+  if (!knop) return;
+
+  function zet(open){
+    paneel.hidden = !open;
+    knop.setAttribute("aria-expanded", String(open));
+  }
+  knop.addEventListener("click", () => zet(paneel.hidden));
+  links.forEach(a => a.addEventListener("click", () => zet(false)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !paneel.hidden){ zet(false); knop.focus(); }
+  });
+  document.addEventListener("click", (e) => {
+    if (!paneel.hidden && !e.target.closest(".nav")) zet(false);
+  });
+
+  /* Welke sectie kijk je nu? Die naam komt in de balk te staan, zodat je ook
+     zonder het menu open te klappen weet waar je bent. */
   const doelen = links.map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
   if (!("IntersectionObserver" in window) || !doelen.length) return;
 
+  /* Bijhouden wat er in beeld is en daarvan de bovenste kiezen. Niet simpelweg
+     de laatste melding pakken: bij een sprong komen er meerdere tegelijk
+     binnen en dan zet je de verkeerde naam in de balk. */
+  const inBeeld = new Set();
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      links.forEach(a => a.classList.toggle("is-active", a.getAttribute("href") === "#" + e.target.id));
+      if (e.isIntersecting) inBeeld.add(e.target.id); else inBeeld.delete(e.target.id);
+    });
+    const huidig = doelen.find(t => inBeeld.has(t.id));
+    if (!huidig) return;
+    links.forEach(a => {
+      const raak = a.getAttribute("href") === "#" + huidig.id;
+      a.classList.toggle("is-active", raak);
+      if (raak) hier.textContent = a.textContent;
     });
   }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
 
