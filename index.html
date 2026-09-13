@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Mannenweekend Edinburgh, 2–4 oktober 2026.">
+<meta name="theme-color" content="#FAF6EC">
+<title>Edinburgh 2026 · Mannenweekend</title>
+
+<!-- Inline SVG favicon (distel in inktlijn). Zie README voor een echt app-icoon. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23FAF6EC'/%3E%3Cpath d='M32 59V33' stroke='%23241A18' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M32 46c-8 0-13-5-14-12 7 0 13 4 14 12z' fill='%236A7151' opacity='.85'/%3E%3Cpath d='M32 46c8 0 13-5 14-12-7 0-13 4-14 12z' fill='%236A7151' opacity='.85'/%3E%3Cpath d='M22 29c0-8 4-13 10-13s10 5 10 13c0 5-5 8-10 8s-10-3-10-8z' fill='%23714D67' opacity='.9'/%3E%3Cpath d='M26 16 24 6M32 15V4M38 16l2-10' stroke='%23714D67' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Edinburgh">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&display=swap">
+
+<!-- Leaflet-CSS niet render-blocking laden: de hero hoeft er niet op te wachten. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="skip" href="#programma">Naar het programma</a>
+
+<!-- ══════════ NAVIGATIE ══════════ -->
+<nav class="nav" id="nav" aria-label="Secties">
+  <ul class="nav__list">
+    <li><a href="#top">Start</a></li>
+    <li><a href="#weer">Weer</a></li>
+    <li><a href="#programma">Programma</a></li>
+    <li><a href="#mannen">De mannen</a></li>
+    <li><a href="#sneuvel">Sneuvelkoning</a></li>
+    <li><a href="#kaart">Kaart</a></li>
+    <li><a href="#praktisch">Praktisch</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- ══════════ 1. HERO ══════════ -->
+  <header class="hero" id="top">
+    <div class="wrap hero__text">
+      <h1 class="hero__title">Edinburgh</h1>
+      <p class="hero__sub">Mannenweekend · 2 – 4 oktober 2026</p>
+      <p class="hero__count">11 man</p>
+
+      <div class="countdown" id="countdown" aria-live="polite">
+        <div class="cd__unit"><span class="cd__num" id="cd-d">–</span><span class="cd__lab">dagen</span></div>
+        <div class="cd__sep" aria-hidden="true">·</div>
+        <div class="cd__unit"><span class="cd__num" id="cd-h">–</span><span class="cd__lab">uren</span></div>
+        <div class="cd__sep" aria-hidden="true">·</div>
+        <div class="cd__unit"><span class="cd__num" id="cd-m">–</span><span class="cd__lab">min</span></div>
+      </div>
+      <p class="cd__note" id="cd-note">tot vertrek vanaf Weidevenne</p>
+    </div>
+
+    <figure class="bleed bleed--skyline">
+      <img src="images/illu-skyline.jpg" alt="Aquarel van de skyline van Edinburgh met het kasteel op de rots"
+           width="2000" height="848" fetchpriority="high" decoding="async" data-fallback="hide">
+    </figure>
+  </header>
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 13C130 3 206 21 322 12 438 3 512 20 638 12 764 4 852 22 972 11 1064 3 1132 15 1198 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+
+  <!-- ══════════ 2. HOE HET BEGON ══════════ -->
+  <section class="sec" id="begin">
+    <div class="wrap">
+      <h2 class="sec__title">Hoe het begon</h2>
+      <div class="note-paper">
+        <p class="note-paper__label">Het bericht dat het allemaal begon</p>
+        <div class="note-paper__body">
+          <p>Caesar schreef er nauwelijks over. Niet omdat er niets te halen viel, maar omdat wie er kwam, zelden haast had om weer terug te keren.</p>
+          <p>De bewoners waren koppig, het weer onbetrouwbaar en de Romeinen schijnen er meer tijd te hebben verloren dan gewonnen. Een oude centurio schreef dat zijn mannen er uiteindelijk hun wapens neerlegden, hun bekers met bier vulden en besloten dat veroveren van het land misschien toch niet het belangrijkste doel van de expeditie was.</p>
+          <p>Eeuwen later is er weinig veranderd.</p>
+          <p>Caledonia bestaat nog steeds.</p>
+          <p>En elf dappere mannen zullen binnenkort ontdekken waarom de Romeinen het daar nooit helemaal voor het zeggen kregen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 11C118 20 198 4 316 12 434 20 508 4 636 11 764 18 846 3 968 12 1062 19 1134 8 1198 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+
+  <!-- ══════════ 3. HET WEER ══════════ -->
+  <section class="sec" id="weer">
+    <div class="wrap">
+      <h2 class="sec__title sec__title--tilt-a">Het weer</h2>
+      <div class="weather" id="weather">
+        <p class="weather__now" id="weather-now">Weer in Edinburgh wordt opgehaald…</p>
+        <div class="weather__body" id="weather-body">
+          <div class="skeleton" aria-hidden="true"></div>
+        </div>
+        <p class="dry" id="weather-dry"></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 12C126 4 208 20 324 11 440 2 514 19 640 12 766 5 850 21 970 12 1060 5 1136 14 1198 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+
+  <!-- ══════════ 4. HET PROGRAMMA ══════════ -->
+  <section class="sec" id="programma">
+    <div class="wrap">
+      <h2 class="sec__title">Het programma</h2>
+      <p class="lede">Onder voorbehoud van voortschrijdend inzicht, vertraagde treinen en een laatste rondje. Tijden mogen schuiven, de richting niet.</p>
+
+      <figure class="illu illu--pub">
+        <img src="images/illu-pub.jpg" alt="Aquarel van een Schots pubpand met het bord The Old Tartan"
+             width="900" height="672" loading="lazy" decoding="async" data-fallback="hide">
+      </figure>
+
+      <div class="tabs" id="day-tabs" role="tablist" aria-label="Dagen"></div>
+      <div class="days" id="days"></div>
+    </div>
+  </section>
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 13C120 5 202 19 318 12 434 5 516 20 638 13 760 6 848 20 966 12 1058 6 1132 14 1198 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+
+  <!-- ══════════ 5. DE MANNEN ══════════ -->
+  <section class="sec" id="mannen">
+    <div class="wrap">
+      <h2 class="sec__title sec__title--tilt-b">De mannen</h2>
+
+      <!-- 5a. Het clanportret -->
+      <figure class="polaroid" id="clan">
+        <button class="polaroid__btn" id="clan-btn" type="button" aria-label="Clanportret groter bekijken">
+          <span class="tape tape--l" aria-hidden="true"></span>
+          <span class="tape tape--r" aria-hidden="true"></span>
+          <span class="polaroid__frame">
+            <img src="images/clan.jpg" alt="Aquarel: elf mannen in kilt op een heuvel bij Edinburgh"
+                 width="1600" height="1073" loading="lazy" decoding="async" id="clan-img" data-fallback="clan">
+          </span>
+        </button>
+        <figcaption class="polaroid__cap">Elf man, één heuvel, geen weg terug.<br><span class="ph">(placeholder — de gezichten volgen nog)</span></figcaption>
+      </figure>
+
+      <!-- 5b. De portretten -->
+      <h3 class="sub__title">De bezetting</h3>
+      <p class="ph ph--block">Placeholder-namen en -portretten. Pas de lijst <code>MANNEN</code> bovenaan script.js aan.</p>
+      <ul class="portraits" id="portraits"></ul>
+    </div>
+  </section>
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 11C124 19 204 5 320 12 436 19 512 5 640 12 768 19 848 4 968 12 1060 18 1134 9 1198 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+
+  <!-- ══════════ 6. DE SNEUVELKONING ══════════ -->
+  <section class="sec" id="sneuvel">
+    <div class="wrap">
+      <h2 class="sec__title">De sneuvelkoning</h2>
+      <p class="lede">De ranglijst van wie er het slechtst aan toe is. Schuif met de
+        pijltjes; bovenaan staat de regerend sneuvelkoning. De stand staat op je eigen telefoon.</p>
+
+      <figure class="illu illu--whisky">
+        <img src="images/illu-whisky.jpg" alt="Aquarel van een fles Scotch whisky met een glas"
+             width="900" height="672" loading="lazy" decoding="async" data-fallback="hide">
+      </figure>
+
+      <ol class="ranking" id="ranking"></ol>
+      <button class="btn btn--ghost" type="button" id="rank-reset">Volgorde herstellen</button>
+    </div>
+  </section>
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 12C122 4 206 20 322 12 438 4 514 19 638 12 762 5 852 21 972 12 1062 5 1134 13 1198 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+
+  <!-- ══════════ 7. KAART ══════════ -->
+  <section class="sec" id="kaart">
+    <div class="wrap">
+      <h2 class="sec__title">De kaart</h2>
+      <p class="lede">Edinburgh, om je een beetje te oriënteren. Waar we precies heen gaan
+        hoor je ter plekke — dat blijft een verrassing.</p>
+      <div class="mapframe">
+        <div class="map" id="map" role="application" aria-label="Kaart van Edinburgh"></div>
+        <button class="map__veil" id="map-veil" type="button">
+          <span class="map__veiltext">Tik om de kaart te gebruiken</span>
+        </button>
+        <button class="map__lock" id="map-lock" type="button" hidden>Kaart vastzetten</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 11C126 19 202 4 320 12 438 20 510 4 638 12 766 20 846 5 968 12 1062 18 1132 9 1198 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+
+  <!-- ══════════ 8. PRAKTISCH ══════════ -->
+  <section class="sec" id="praktisch">
+    <div class="wrap">
+      <h2 class="sec__title sec__title--tilt-b">Praktisch</h2>
+
+      <div class="fx">
+        <h3 class="fx__title">Pond naar euro</h3>
+        <div class="fx__row">
+          <label class="fx__field">
+            <span class="fx__cur">&pound;</span>
+            <input id="fx-gbp" type="text" inputmode="decimal" autocomplete="off"
+                   value="10" aria-label="Bedrag in pond">
+          </label>
+          <span class="fx__eq" aria-hidden="true">=</span>
+          <p class="fx__out" id="fx-eur" aria-live="polite">&euro; 12,00</p>
+        </div>
+        <div class="fx__quick" id="fx-quick"></div>
+        <p class="fx__rate">
+          <label for="fx-rate">Koers: &pound;1 =</label>
+          <input id="fx-rate" type="text" inputmode="decimal" autocomplete="off" value="1,20">
+          <span>euro</span>
+        </p>
+        <p class="fx__hint">Koers klopt niet meer? Pas hem hierboven aan, hij wordt onthouden.</p>
+      </div>
+
+      <div class="notepad" id="praktisch-blok"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════ 9. FOOTER ══════════ -->
+<figure class="bleed bleed--hills">
+  <img src="images/illu-heuvels.jpg" alt="Aquarel van Schotse heuvels met distels en heide"
+       width="1024" height="434" loading="lazy" decoding="async" data-fallback="hide">
+</figure>
+
+<footer class="footer">
+  <p class="footer__title">Edinburgh 2026</p>
+  <p class="footer__motto">Wie er komt, heeft zelden haast om terug te keren.</p>
+</footer>
+
+<!-- ══════════ LIGHTBOX (clanportret) ══════════ -->
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" id="lightbox-close" type="button" aria-label="Sluiten">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6c4 4.2 7.8 8 12 12M18 6.2C14 10.2 10 13.8 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+  </button>
+  <div class="lightbox__stage" id="lightbox-stage">
+    <img src="" alt="Clanportret op volledig scherm" id="lightbox-img">
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script src="script.js" defer></script>
+</body>
+</html>
