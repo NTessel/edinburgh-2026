@@ -657,6 +657,15 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
 }
 .rank--koning .rank__naam{ font-weight: 700; }
 
+.rank__status{
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--ink-soft);
+  min-height: 24px;
+}
+.rank__bar{ display: flex; flex-wrap: wrap; gap: 10px; }
+
 .btn{
   display: inline-flex;
   align-items: center;
@@ -719,6 +728,9 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
+/* zonder deze regel wint display:flex hierboven van de browserregel
+   [hidden]{display:none} en blijft de overlay staan na een tik */
+.map__veil[hidden]{ display: none; }
 .map__veiltext{
   font-family: var(--font-hand);
   font-size: 24px;

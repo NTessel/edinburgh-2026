@@ -78,6 +78,19 @@ const PRAKTISCH = [
   { label: "Stroom",       waarde: "Stekker type G, drie rechthoekige pennen. Neem een adapter mee — één per twee man is genoeg." }
 ];
 
+/* ── SNEUVELKONING: gedeelde stand ───────────────────────────────────────
+   Laat SNEUVEL_DB leeg, dan houdt iedereen zijn eigen lijstje op zijn eigen
+   telefoon. Vul je hier je Firebase-adres in, dan zien alle elf dezelfde
+   lijst en kan alleen de scheidsrechter hem aanpassen.
+   Stap voor stap uitgelegd in de README, onder "De sneuvelkoning delen".  */
+const SNEUVEL_DB = "https://edinburgh-2026-default-rtdb.europe-west1.firebasedatabase.app/sneuvel.json";   // leeg laten = iedereen zijn eigen lijstje
+
+/* De scheidsrechterscode staat hier versleuteld, zodat hij niet zomaar in de
+   openbare repo te lezen is. De standaardcode is:  kilt2026
+   Een andere code? Open de site, druk F12 en typ:  codeHash("jouwcode")
+   Plak de uitkomst hieronder.                                             */
+const SCHEIDSRECHTER_HASH = "336b5947";
+
 /* ── WISSELKOERS ─────────────────────────────────────────────────────────
    Startwaarde voor de omrekentool. Je kunt de koers ook op de site zelf
    aanpassen; die aanpassing wordt op je telefoon onthouden.               */
@@ -407,23 +420,61 @@ function klimaatBlok(extraRegel){
 })();
 
 /* ═══════════ 5. DE SNEUVELKONING ═══════════ */
+
+/* Kleine hash (FNV-1a). Geen beveiliging, wel een drempel: de code staat
+   hierdoor niet leesbaar in de openbare repo. Handig om een nieuwe code te
+   maken: open de console en typ codeHash("jouwcode"). */
+function codeHash(tekst){
+  let h = 0x811c9dc5;
+  const t = String(tekst).trim().toLowerCase();
+  for (let i = 0; i < t.length; i++){
+    h ^= t.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(16).padStart(8, "0");
+}
+window.codeHash = codeHash;
+
 (function sneuvelkoning(){
   const lijst = $("#ranking");
   if (!lijst) return;
+
   const KEY = "edi26.sneuvel";
+  const SLEUTEL_CODE = "edi26.scheids";
+  const gedeeld = !!SNEUVEL_DB;
 
-  /* Opgeslagen volgorde inlezen, maar wel meebewegen met MANNEN:
-     namen die weg zijn vallen af, nieuwe namen komen onderaan erbij. */
+  const status = $("#rank-status");
+  const knopUnlock = $("#rank-unlock");
+  const knopReset = $("#rank-reset");
+
+  /* Zonder gedeelde database mag iedereen gewoon schuiven, net als voorheen. */
+  let magSchuiven = !gedeeld;
+  try { if (localStorage.getItem(SLEUTEL_CODE) === SCHEIDSRECHTER_HASH) magSchuiven = true; } catch(e){}
+
   let volgorde = [];
-  try { volgorde = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch(e){ volgorde = []; }
-  if (!Array.isArray(volgorde)) volgorde = [];
-  volgorde = volgorde.filter(n => MANNEN.includes(n));
-  MANNEN.forEach(n => { if (!volgorde.includes(n)) volgorde.push(n); });
+  let bijgewerkt = 0;
+  let bezigMetOpslaan = false;
+  let nogmaalsOpslaan = false;
+  let opslaanTimer = null;
 
-  function bewaar(){
+  /* Een opgeslagen volgorde moet meebewegen met MANNEN: namen die weg zijn
+     vallen af, nieuwe namen komen onderaan erbij. */
+  function schoon(lijstje){
+    const uit = (Array.isArray(lijstje) ? lijstje : []).filter(n => MANNEN.includes(n));
+    MANNEN.forEach(n => { if (!uit.includes(n)) uit.push(n); });
+    return uit;
+  }
+
+  function lokaalLezen(){
+    try { return schoon(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch(e){ return schoon([]); }
+  }
+  function lokaalBewaren(){
     try { localStorage.setItem(KEY, JSON.stringify(volgorde)); } catch(e){ /* privemodus */ }
   }
 
+  volgorde = lokaalLezen();
+
+  /* ── iconen ── */
   const kroon =
     '<svg class="rank__crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" ' +
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -442,20 +493,87 @@ function klimaatBlok(extraRegel){
       '<li class="rank' + (i === 0 ? " rank--koning" : "") + '">' +
         '<span class="rank__pos">' + (i === 0 ? kroon : (i + 1)) + '</span>' +
         '<span class="rank__naam">' + esc(cap(naam)) + '</span>' +
-        '<span class="rank__knoppen">' +
-          '<button class="rank__btn" type="button" data-op="' + i + '"' +
-            (i === 0 ? ' disabled' : '') + ' aria-label="' + esc(cap(naam)) + ' omhoog">' + pijl(true) + '</button>' +
-          '<button class="rank__btn" type="button" data-neer="' + i + '"' +
-            (i === volgorde.length - 1 ? ' disabled' : '') + ' aria-label="' + esc(cap(naam)) + ' omlaag">' + pijl(false) + '</button>' +
-        '</span>' +
+        (magSchuiven
+          ? '<span class="rank__knoppen">' +
+              '<button class="rank__btn" type="button" data-op="' + i + '"' +
+                (i === 0 ? ' disabled' : '') + ' aria-label="' + esc(cap(naam)) + ' omhoog">' + pijl(true) + '</button>' +
+              '<button class="rank__btn" type="button" data-neer="' + i + '"' +
+                (i === volgorde.length - 1 ? ' disabled' : '') + ' aria-label="' + esc(cap(naam)) + ' omlaag">' + pijl(false) + '</button>' +
+            '</span>'
+          : '') +
       '</li>'
     ).join("");
+    knopReset.hidden = !magSchuiven;
+    knopUnlock.hidden = magSchuiven || !gedeeld;
+  }
+
+  function meldStand(tekst){ status.textContent = tekst; }
+
+  function tijdTekst(ms){
+    if (!ms) return "";
+    const min = Math.round((Date.now() - ms) / 60000);
+    if (min < 1) return "zojuist bijgewerkt";
+    if (min < 60) return "bijgewerkt, " + min + " min geleden";
+    const uur = Math.round(min / 60);
+    return "bijgewerkt, " + uur + (uur === 1 ? " uur" : " uur") + " geleden";
+  }
+
+  /* ── gedeelde stand ophalen en wegschrijven ── */
+  async function haalOp(){
+    if (!gedeeld) return;
+    try {
+      const r = await fetch(SNEUVEL_DB + "?_=" + Date.now(), { cache: "no-store" });
+      if (!r.ok) throw new Error("http " + r.status);
+      const data = await r.json();
+      if (data && Array.isArray(data.volgorde)){
+        volgorde = schoon(data.volgorde);
+        bijgewerkt = data.bijgewerkt || 0;
+        lokaalBewaren();
+        teken();
+        meldStand(tijdTekst(bijgewerkt));
+      } else {
+        meldStand("Nog geen stand gedeeld.");
+      }
+    } catch(e){
+      // stil terugvallen op wat er lokaal staat; geen foutmelding in beeld
+      meldStand("Even geen verbinding — dit is de laatst bekende stand.");
+    }
+  }
+
+  /* Schuif je snel achter elkaar, dan wachten we even en sturen we één keer
+     de eindstand. Loopt er al een verzoek, dan gaat er daarna nóg een, met de
+     laatste stand — anders zou het scherm iets anders tonen dan de database. */
+  function planOpslaan(){
+    if (!gedeeld) return;
+    clearTimeout(opslaanTimer);
+    meldStand("opslaan…");
+    opslaanTimer = setTimeout(schrijfWeg, 500);
+  }
+
+  async function schrijfWeg(){
+    if (!gedeeld) return;
+    if (bezigMetOpslaan){ nogmaalsOpslaan = true; return; }
+    bezigMetOpslaan = true;
+    try {
+      const r = await fetch(SNEUVEL_DB, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ volgorde: volgorde, bijgewerkt: Date.now() })
+      });
+      if (!r.ok) throw new Error("http " + r.status);
+      meldStand("zojuist bijgewerkt");
+    } catch(e){
+      meldStand("Opslaan lukte niet — probeer het zo nog eens.");
+    }
+    bezigMetOpslaan = false;
+    if (nogmaalsOpslaan){ nogmaalsOpslaan = false; schrijfWeg(); }
   }
 
   function wissel(a, b){
     const t = volgorde[a]; volgorde[a] = volgorde[b]; volgorde[b] = t;
-    bewaar();
+    lokaalBewaren();
     teken();
+    planOpslaan();
     // focus terug op de knop die je net gebruikte, zodat doortikken blijft werken
     const knop = $('[data-' + (b < a ? 'op' : 'neer') + '="' + b + '"]', lijst);
     if (knop && !knop.disabled) knop.focus();
@@ -464,18 +582,38 @@ function klimaatBlok(extraRegel){
   lijst.addEventListener("click", (e) => {
     const b = e.target.closest("button");
     if (!b || b.disabled) return;
-    if (b.dataset.op  !== undefined) wissel(Number(b.dataset.op), Number(b.dataset.op) - 1);
+    if (b.dataset.op   !== undefined) wissel(Number(b.dataset.op), Number(b.dataset.op) - 1);
     if (b.dataset.neer !== undefined) wissel(Number(b.dataset.neer), Number(b.dataset.neer) + 1);
   });
 
-  $("#rank-reset").addEventListener("click", () => {
-    if (!confirm("De ranglijst terugzetten op de oorspronkelijke volgorde?")) return;
-    volgorde = MANNEN.slice();
-    bewaar();
+  knopUnlock.addEventListener("click", () => {
+    const ingevoerd = prompt("Scheidsrechterscode:");
+    if (ingevoerd === null) return;
+    if (codeHash(ingevoerd) !== SCHEIDSRECHTER_HASH){
+      alert("Die code klopt niet.");
+      return;
+    }
+    magSchuiven = true;
+    try { localStorage.setItem(SLEUTEL_CODE, SCHEIDSRECHTER_HASH); } catch(e){}
     teken();
   });
 
+  knopReset.addEventListener("click", () => {
+    if (!confirm("De ranglijst terugzetten op de oorspronkelijke volgorde?")) return;
+    volgorde = MANNEN.slice();
+    lokaalBewaren();
+    teken();
+    planOpslaan();
+  });
+
   teken();
+
+  if (gedeeld){
+    haalOp();
+    // meekijken met wat de scheidsrechter doet, maar alleen als je kijkt
+    setInterval(() => { if (!document.hidden && !magSchuiven) haalOp(); }, 20000);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) haalOp(); });
+  }
 })();
 
 /* ═══════════ 6. KAART ═══════════ */
@@ -511,7 +649,9 @@ function klimaatBlok(extraRegel){
   });
 })();
 
-/* ═══════════ 7. PRAKTISCH ═══════════ */
+/* ═══════════ 7. PRAKTISCH ═══════════
+   De sectie staat nu even niet op de pagina. De data (PRAKTISCH) en deze code
+   blijven staan: zet het blok in index.html terug en het werkt weer.        */
 (function praktisch(){
   const blok = $("#praktisch-blok");
   if (!blok) return;

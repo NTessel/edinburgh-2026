@@ -24,11 +24,14 @@ images/                 de illustraties en portretten
 | Vertrekmoment voor de countdown | `VERTREK` |
 | De elf mannen | `MANNEN` |
 | Programma per dag | `PROGRAMMA` |
-| Whisky's op de scorekaart | `WHISKYS` |
-| De 16 bingovakjes | `BINGO` |
-| Pinnetjes op de kaart | `PLAATSEN` |
-| Vluchten, hotel, noodnummer, geld, stekkers | `PRAKTISCH` |
+| Gedeelde sneuvelkoning aanzetten | `SNEUVEL_DB` |
+| De scheidsrechterscode | `SCHEIDSRECHTER_HASH` |
+| Wisselkoers en snelknoppen | `KOERS_GBP_EUR`, `FX_SNELKEUZE` |
+| Middelpunt van de kaart | `KAART_MIDDEN`, `KAART_ZOOM` |
 | Klimaatcijfers + de droge opmerking | `KLIMAAT`, `WEER_OPMERKING` |
+
+Het blok `PRAKTISCH` (vluchten, hotel, noodnummer) staat er nog, maar de sectie
+is voorlopig van de pagina gehaald. Terugzetten kan later in één keer.
 
 Bewerk met een gewone teksteditor, sla op, ververs de pagina. Let op de komma's
 tussen de regels — vergeet je er één, dan blijft de sectie leeg.
@@ -47,14 +50,15 @@ Elk item ziet er zo uit:
 Verandert een dátum? Pas dan ook `datum: [2026, 9, 2]` aan —
 dat is `[jaar, maand−1, dag]`, dus **9 = oktober**.
 
-### Bingo
-Houd elk vakje op **maximaal vijf korte woorden en geen woord langer dan
-ongeveer tien letters**, anders past het niet meer in een vakje op een telefoon
-van 360px breed.
+### De sneuvelkoning
+De ranglijst gebruikt dezelfde namen als `MANNEN`. Voeg je iemand toe, dan komt
+hij vanzelf onderaan de lijst erbij; haal je iemand weg, dan verdwijnt hij.
+Je hoeft de ranglijst zelf nergens bij te houden.
 
 ### Kaart
-Coördinaten vind je door in Google Maps rechts te klikken op een plek: ze staan
-bovenaan het menu. Vervang dan `lat` en `lon` en haal `placeholder: true` weg.
+Een gewone kaart van Edinburgh, bewust zonder pinnen. Wil je hem ergens anders
+laten beginnen, pas dan `KAART_MIDDEN` en `KAART_ZOOM` aan. Coördinaten vind je
+door in Google Maps rechts te klikken op een plek.
 
 ---
 
@@ -156,7 +160,84 @@ beginscherm*. Hij opent dan zonder browserbalk, als een app.
 
 ---
 
-## 6. Deployen naar GitHub Pages
+## 6. De sneuvelkoning delen
+
+**Dit staat al aan.** De stand wordt gedeeld via een Firebase-database:
+
+```
+https://edinburgh-2026-default-rtdb.europe-west1.firebasedatabase.app/sneuvel.json
+```
+
+Iedereen ziet dezelfde lijst, alleen de scheidsrechter kan schuiven. De code is
+**`kilt2026`** (hoofdletters maken niet uit). Je hoeft hier niets meer voor te doen.
+
+De stappen hieronder staan er voor als je het ooit opnieuw moet opzetten, of
+naar een ander project wilt verhuizen.
+
+### Zo zet je het (opnieuw) aan
+
+1. Ga naar [console.firebase.google.com](https://console.firebase.google.com) en
+   log in met een Google-account.
+2. **Project toevoegen** → noem het bijvoorbeeld `edinburgh-2026`.
+   Google Analytics mag je uitzetten.
+3. In het menu links: **Build → Realtime Database → Database maken**.
+   Kies als locatie **europe-west1** en start in testmodus.
+4. Ga naar het tabblad **Regels** en zet er dit neer:
+
+   ```json
+   {
+     "rules": {
+       "sneuvel": { ".read": true, ".write": true }
+     }
+   }
+   ```
+
+   Publiceren. (Zonder deze stap stopt het na 30 dagen, want de testmodus loopt af.)
+5. Op het tabblad **Gegevens** staat bovenaan de URL van je database, zoiets als
+   `https://edinburgh-2026-default-rtdb.europe-west1.firebasedatabase.app`
+6. Zet die URL bovenaan `script.js`, met **`/sneuvel.json` erachter**:
+
+   ```js
+   const SNEUVEL_DB = "https://edinburgh-2026-default-rtdb.europe-west1.firebasedatabase.app/sneuvel.json";
+   ```
+
+7. Pushen naar GitHub. Klaar.
+
+### Hoe het dan werkt
+
+- Iedereen die de site opent ziet dezelfde lijst, met eronder hoe lang geleden
+  hij is bijgewerkt. Geen pijltjes: je kunt alleen kijken.
+- Onderaan staat een knop **"Ik ben de scheidsrechter"**. Daar typ je de code in.
+  Klopt hij, dan verschijnen de pijltjes en kun jij schuiven. Elke verschuiving
+  gaat meteen naar de database, en de anderen zien hem binnen twintig seconden.
+- Je telefoon onthoudt dat je de scheidsrechter bent. Je typt de code dus
+  één keer, niet elke keer.
+- **De standaardcode is `kilt2026`.** Hoofdletters maken niet uit.
+
+### Een andere code kiezen
+
+De code staat niet leesbaar in de repo, maar als een korte versleutelde waarde.
+Wil je een eigen code:
+
+1. Open de site in Chrome op je laptop en druk op **F12** (tabblad *Console*).
+2. Typ `codeHash("jouwnieuwecode")` en druk op enter.
+3. Je krijgt acht tekens terug, bijvoorbeeld `a1b2c3d4`. Zet die bovenaan
+   `script.js` bij `SCHEIDSRECHTER_HASH`, en push.
+
+### Wat die code wél en niet is
+
+Het is een drempel, geen slot. Hij zorgt ervoor dat niemand per ongeluk of voor
+de grap de lijst omgooit, en dat de code niet zomaar in de repo te lezen is.
+Maar iemand die er echt werk van maakt, kan de database omzeilen — de regels
+hierboven laten immers iedereen met de URL schrijven. Voor een ranglijst van
+elf vrienden is dat prima; zet er verder niets gevoeligs in.
+
+**Doe je stap 1 tot 7 niet?** Dan werkt de site gewoon, alleen houdt iedereen
+dan zijn eigen lijstje bij. Er gaat niets stuk.
+
+---
+
+## 7. Deployen naar GitHub Pages
 
 Eenmalig instellen:
 
@@ -191,7 +272,7 @@ wachtwoorden in.
 
 ---
 
-## 7. Lokaal bekijken en op je telefoon testen
+## 8. Lokaal bekijken en op je telefoon testen
 
 Op je Mac, in de map van het project:
 
@@ -221,12 +302,11 @@ Zo zie je meteen hoe het écht op een telefoon oogt. Stoppen doe je met `Ctrl-C`
 
 ---
 
-## 8. Handig om te weten
+## 9. Handig om te weten
 
-- **Bingo en whiskyscores** staan in `localStorage`, dus per telefoon en per
-  browser. Iedereen heeft zijn eigen kaart; ze worden niet gedeeld. Ze
-  overleven het sluiten van de browser, maar niet het wissen van je
-  browsergegevens.
+- **De sneuvelkoning** staat in `localStorage` zolang je `SNEUVEL_DB` leeg laat,
+  dus per telefoon. Zet je hem aan, dan staat de stand centraal — zie punt 6.
+- **De wisselkoers** die je zelf instelt wordt per telefoon onthouden.
 - **Het weer** komt van Open-Meteo, zonder API-key. Tot veertien dagen voor
   vertrek toont de site de oktobergemiddelden; daarna schakelt hij vanzelf over
   naar de echte verwachting voor 2, 3 en 4 oktober. Doet de API het even niet,
@@ -235,6 +315,7 @@ Zo zie je meteen hoe het écht op een telefoon oogt. Stoppen doe je met `Ctrl-C`
   automatisch de juiste dagtab en scrolt ernaartoe.
 - **De kaart** is bij het laden vergrendeld, zodat hij je scroll niet afvangt.
   Eén tik activeert hem, en met "Kaart vastzetten" zet je hem weer vast.
-  De tegels komen van OpenStreetMap (geen API-key nodig).
+  De tegels komen van OpenStreetMap (geen API-key nodig). Er staan bewust geen
+  pinnen op: waar jullie heen gaan blijft een verrassing.
 - **Externe bronnen:** Google Fonts (Caveat + Nunito), Leaflet via unpkg,
   OpenStreetMap-tegels, Open-Meteo. Verder niets — geen tracking, geen cookies.

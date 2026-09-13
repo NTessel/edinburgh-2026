@@ -34,12 +34,12 @@
 <nav class="nav" id="nav" aria-label="Secties">
   <ul class="nav__list">
     <li><a href="#top">Start</a></li>
+    <li><a href="#mannen">De mannen</a></li>
     <li><a href="#weer">Weer</a></li>
     <li><a href="#programma">Programma</a></li>
-    <li><a href="#mannen">De mannen</a></li>
     <li><a href="#sneuvel">Sneuvelkoning</a></li>
     <li><a href="#kaart">Kaart</a></li>
-    <li><a href="#praktisch">Praktisch</a></li>
+    <li><a href="#pond">Pond</a></li>
   </ul>
 </nav>
 
@@ -89,41 +89,11 @@
 
   <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 11C118 20 198 4 316 12 434 20 508 4 636 11 764 18 846 3 968 12 1062 19 1134 8 1198 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
 
-  <!-- ══════════ 3. HET WEER ══════════ -->
-  <section class="sec" id="weer">
-    <div class="wrap">
-      <h2 class="sec__title sec__title--tilt-a">Het weer</h2>
-      <div class="weather" id="weather">
-        <p class="weather__now" id="weather-now">Weer in Edinburgh wordt opgehaald…</p>
-        <div class="weather__body" id="weather-body">
-          <div class="skeleton" aria-hidden="true"></div>
-        </div>
-        <p class="dry" id="weather-dry"></p>
-      </div>
-    </div>
-  </section>
 
-  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 12C126 4 208 20 324 11 440 2 514 19 640 12 766 5 850 21 970 12 1060 5 1136 14 1198 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
 
-  <!-- ══════════ 4. HET PROGRAMMA ══════════ -->
-  <section class="sec" id="programma">
-    <div class="wrap">
-      <h2 class="sec__title">Het programma</h2>
-      <p class="lede">Onder voorbehoud van voortschrijdend inzicht, vertraagde treinen en een laatste rondje. Tijden mogen schuiven, de richting niet.</p>
 
-      <figure class="illu illu--pub">
-        <img src="images/illu-pub.jpg" alt="Aquarel van een Schots pubpand met het bord The Old Tartan"
-             width="900" height="672" loading="lazy" decoding="async" data-fallback="hide">
-      </figure>
 
-      <div class="tabs" id="day-tabs" role="tablist" aria-label="Dagen"></div>
-      <div class="days" id="days"></div>
-    </div>
-  </section>
-
-  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 13C120 5 202 19 318 12 434 5 516 20 638 13 760 6 848 20 966 12 1058 6 1132 14 1198 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
-
-  <!-- ══════════ 5. DE MANNEN ══════════ -->
+  <!-- ══════════ 3. DE MANNEN ══════════ -->
   <section class="sec" id="mannen">
     <div class="wrap">
       <h2 class="sec__title sec__title--tilt-b">De mannen</h2>
@@ -149,13 +119,44 @@
   </section>
 
   <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 11C124 19 204 5 320 12 436 19 512 5 640 12 768 19 848 4 968 12 1060 18 1134 9 1198 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+  <!-- ══════════ 4. HET WEER ══════════ -->
+  <section class="sec" id="weer">
+    <div class="wrap">
+      <h2 class="sec__title sec__title--tilt-a">Het weer</h2>
+      <div class="weather" id="weather">
+        <p class="weather__now" id="weather-now">Weer in Edinburgh wordt opgehaald…</p>
+        <div class="weather__body" id="weather-body">
+          <div class="skeleton" aria-hidden="true"></div>
+        </div>
+        <p class="dry" id="weather-dry"></p>
+      </div>
+    </div>
+  </section>
 
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 12C126 4 208 20 324 11 440 2 514 19 640 12 766 5 850 21 970 12 1060 5 1136 14 1198 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+  <!-- ══════════ 5. HET PROGRAMMA ══════════ -->
+  <section class="sec" id="programma">
+    <div class="wrap">
+      <h2 class="sec__title">Het programma</h2>
+      <p class="lede">Onder voorbehoud van voortschrijdend inzicht, vertraagde treinen en een laatste rondje. Tijden mogen schuiven, de richting niet.</p>
+
+      <figure class="illu illu--pub">
+        <img src="images/illu-pub.jpg" alt="Aquarel van een Schots pubpand met het bord The Old Tartan"
+             width="900" height="672" loading="lazy" decoding="async" data-fallback="hide">
+      </figure>
+
+      <div class="tabs" id="day-tabs" role="tablist" aria-label="Dagen"></div>
+      <div class="days" id="days"></div>
+    </div>
+  </section>
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 13C120 5 202 19 318 12 434 5 516 20 638 13 760 6 848 20 966 12 1058 6 1132 14 1198 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
   <!-- ══════════ 6. DE SNEUVELKONING ══════════ -->
   <section class="sec" id="sneuvel">
     <div class="wrap">
       <h2 class="sec__title">De sneuvelkoning</h2>
-      <p class="lede">De ranglijst van wie er het slechtst aan toe is. Schuif met de
-        pijltjes; bovenaan staat de regerend sneuvelkoning. De stand staat op je eigen telefoon.</p>
+      <p class="lede">De ranglijst van wie er het slechtst aan toe is. Bovenaan staat de
+        regerend sneuvelkoning. Iedereen ziet dezelfde stand; de scheidsrechter schuift.</p>
 
       <figure class="illu illu--whisky">
         <img src="images/illu-whisky.jpg" alt="Aquarel van een fles Scotch whisky met een glas"
@@ -163,12 +164,15 @@
       </figure>
 
       <ol class="ranking" id="ranking"></ol>
-      <button class="btn btn--ghost" type="button" id="rank-reset">Volgorde herstellen</button>
+      <p class="rank__status" id="rank-status" aria-live="polite"></p>
+      <div class="rank__bar">
+        <button class="btn btn--ghost" type="button" id="rank-unlock">Ik ben de scheidsrechter</button>
+        <button class="btn btn--ghost" type="button" id="rank-reset" hidden>Volgorde herstellen</button>
+      </div>
     </div>
   </section>
 
   <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 12C122 4 206 20 322 12 438 4 514 19 638 12 762 5 852 21 972 12 1062 5 1134 13 1198 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
-
   <!-- ══════════ 7. KAART ══════════ -->
   <section class="sec" id="kaart">
     <div class="wrap">
@@ -187,13 +191,15 @@
 
   <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 11C126 19 202 4 320 12 438 20 510 4 638 12 766 20 846 5 968 12 1062 18 1132 9 1198 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
 
-  <!-- ══════════ 8. PRAKTISCH ══════════ -->
-  <section class="sec" id="praktisch">
-    <div class="wrap">
-      <h2 class="sec__title sec__title--tilt-b">Praktisch</h2>
 
+
+  <div class="divider" aria-hidden="true"><svg viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M2 11C126 19 202 4 320 12 438 20 510 4 638 12 766 20 846 5 968 12 1062 18 1132 9 1198 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+
+  <!-- ══════════ 8. POND & EURO ══════════ -->
+  <section class="sec" id="pond">
+    <div class="wrap">
+      <h2 class="sec__title sec__title--tilt-b">Pond &amp; euro</h2>
       <div class="fx">
-        <h3 class="fx__title">Pond naar euro</h3>
         <div class="fx__row">
           <label class="fx__field">
             <span class="fx__cur">&pound;</span>
@@ -211,8 +217,6 @@
         </p>
         <p class="fx__hint">Koers klopt niet meer? Pas hem hierboven aan, hij wordt onthouden.</p>
       </div>
-
-      <div class="notepad" id="praktisch-blok"></div>
     </div>
   </section>
 
