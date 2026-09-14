@@ -60,8 +60,13 @@ Zolang `PROGRAMMA_ZICHTBAAR` op `false` staat, ziet iedereen het blokje
 Zet hem op `true` zodra het programma vaststaat, en alles verschijnt in één keer.
 
 ### De sneuvelkoning
-De ranglijst gebruikt dezelfde namen als `MANNEN`. Voeg je iemand toe, dan komt
-hij vanzelf onderaan de lijst erbij; haal je iemand weg, dan verdwijnt hij.
+Iedereen begint op 0 drams. Als scheidsrechter tik je op het whiskyglaasje
+naast een naam om er een dram bij te geven, en op het streepje om er eentje
+af te halen (voor als je je vertikt hebt). De lijst sorteert zichzelf: wie de
+meeste drams heeft staat bovenaan en krijgt de kroon.
+
+De ranglijst gebruikt dezelfde namen als `MANNEN`. Voeg je iemand toe, dan
+verschijnt hij automatisch met 0 drams; haal je iemand weg, dan verdwijnt hij.
 Je hoeft de ranglijst zelf nergens bij te houden.
 
 ### Kaart
@@ -177,7 +182,7 @@ beginscherm*. Hij opent dan zonder browserbalk, als een app.
 https://edinburgh-2026-default-rtdb.europe-west1.firebasedatabase.app/sneuvel.json
 ```
 
-Iedereen ziet dezelfde lijst, alleen de scheidsrechter kan schuiven. De code is
+Iedereen ziet dezelfde lijst, alleen de scheidsrechter kan drams geven. De code is
 **`kilt2026`** (hoofdletters maken niet uit). Je hoeft hier niets meer voor te doen.
 
 De stappen hieronder staan er voor als je het ooit opnieuw moet opzetten, of
@@ -215,10 +220,11 @@ naar een ander project wilt verhuizen.
 ### Hoe het dan werkt
 
 - Iedereen die de site opent ziet dezelfde lijst, met eronder hoe lang geleden
-  hij is bijgewerkt. Geen pijltjes: je kunt alleen kijken.
+  hij is bijgewerkt. Geen knoppen: je kunt alleen kijken.
 - Onderaan staat een knop **"Ik ben de scheidsrechter"**. Daar typ je de code in.
-  Klopt hij, dan verschijnen de pijltjes en kun jij schuiven. Elke verschuiving
-  gaat meteen naar de database, en de anderen zien hem binnen twintig seconden.
+  Klopt hij, dan verschijnen het glaasje en het streepje per naam, en kun jij
+  drams geven of afhalen. Elke wijziging gaat meteen naar de database, en de
+  anderen zien hem binnen twintig seconden.
 - Je telefoon onthoudt dat je de scheidsrechter bent. Je typt de code dus
   één keer, niet elke keer.
 - **De standaardcode is `kilt2026`.** Hoofdletters maken niet uit.

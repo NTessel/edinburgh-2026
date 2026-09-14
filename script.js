@@ -462,32 +462,35 @@ window.codeHash = codeHash;
   const knopUnlock = $("#rank-unlock");
   const knopReset = $("#rank-reset");
 
-  /* Zonder gedeelde database mag iedereen gewoon schuiven, net als voorheen. */
-  let magSchuiven = !gedeeld;
-  try { if (localStorage.getItem(SLEUTEL_CODE) === SCHEIDSRECHTER_HASH) magSchuiven = true; } catch(e){}
+  /* Zonder gedeelde database mag iedereen gewoon punten geven, net als voorheen. */
+  let magWijzigen = !gedeeld;
+  try { if (localStorage.getItem(SLEUTEL_CODE) === SCHEIDSRECHTER_HASH) magWijzigen = true; } catch(e){}
 
-  let volgorde = [];
+  let punten = {};
   let bijgewerkt = 0;
   let bezigMetOpslaan = false;
   let nogmaalsOpslaan = false;
   let opslaanTimer = null;
 
-  /* Een opgeslagen volgorde moet meebewegen met MANNEN: namen die weg zijn
-     vallen af, nieuwe namen komen onderaan erbij. */
-  function schoon(lijstje){
-    const uit = (Array.isArray(lijstje) ? lijstje : []).filter(n => MANNEN.includes(n));
-    MANNEN.forEach(n => { if (!uit.includes(n)) uit.push(n); });
-    return uit;
+  /* Een opgeslagen stand moet meebewegen met MANNEN: namen die weg zijn
+     vallen af, nieuwe namen beginnen op 0 drams. Ook oude standen (van vóór
+     het puntensysteem, toen dit nog een geordende lijst was) vangen we hier
+     netjes op: die tellen simpelweg als "iedereen op 0". */
+  function schoon(ruw){
+    const bron = (ruw && typeof ruw === "object" && !Array.isArray(ruw)) ? ruw : {};
+    const out = {};
+    MANNEN.forEach(n => { out[n] = Number.isFinite(bron[n]) ? Math.max(0, bron[n]) : 0; });
+    return out;
   }
 
   function lokaalLezen(){
-    try { return schoon(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch(e){ return schoon([]); }
+    try { return schoon(JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e){ return schoon({}); }
   }
   function lokaalBewaren(){
-    try { localStorage.setItem(KEY, JSON.stringify(volgorde)); } catch(e){ /* privemodus */ }
+    try { localStorage.setItem(KEY, JSON.stringify(punten)); } catch(e){ /* privemodus */ }
   }
 
-  volgorde = lokaalLezen();
+  punten = lokaalLezen();
 
   /* ── iconen ── */
   const kroon =
@@ -496,30 +499,40 @@ window.codeHash = codeHash;
     '<path d="M3.4 8.2c1.5 1.1 3 2.3 4.5 3.4 1.3-2 2.7-4 4.1-6 1.4 2 2.8 4 4.1 6 1.5-1.1 3-2.3 4.5-3.4' +
     'c-.6 3.4-1.2 6.8-1.7 10.2-4.6.5-9.2.5-13.8 0-.6-3.4-1.1-6.8-1.7-10.2z"/>' +
     '<path d="M7.2 15.4c3.2-.5 6.4-.5 9.6 0"/></svg>';
-  const pijl = (op) =>
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
-    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-    (op ? '<path d="M5.6 14.6C7.7 12.2 9.9 9.9 12.1 7.6c2.1 2.4 4.2 4.7 6.3 7.1"/>'
-        : '<path d="M5.6 9.4c2.1 2.4 4.3 4.7 6.5 7 2.1-2.4 4.2-4.7 6.3-7.1"/>') +
-    '</svg>';
+  const dramIcon = icoonSvg("whisky");
+  const minIcon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+    'stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>';
+
+  function dramTekst(n){ return n + (n === 1 ? " dram" : " drams"); }
+
+  /* Sortering is puur op puntental; bij gelijke stand houden we de volgorde
+     van MANNEN aan, zodat de lijst niet random door elkaar springt. */
+  function gesorteerd(){
+    return MANNEN.slice().sort((a, b) => punten[b] - punten[a]);
+  }
 
   function teken(){
-    lijst.innerHTML = volgorde.map((naam, i) =>
-      '<li class="rank' + (i === 0 ? " rank--koning" : "") + '">' +
-        '<span class="rank__pos">' + (i === 0 ? kroon : (i + 1)) + '</span>' +
+    const volgorde = gesorteerd();
+    const meesteDrams = Math.max(0, ...MANNEN.map(n => punten[n]));
+    lijst.innerHTML = volgorde.map((naam, i) => {
+      const isKoning = meesteDrams > 0 && punten[naam] === meesteDrams;
+      return '<li class="rank' + (isKoning ? " rank--koning" : "") + '">' +
+        '<span class="rank__pos">' + (isKoning ? kroon : (i + 1)) + '</span>' +
         '<span class="rank__naam">' + esc(cap(naam)) + '</span>' +
-        (magSchuiven
+        '<span class="rank__punten">' + dramTekst(punten[naam]) + '</span>' +
+        (magWijzigen
           ? '<span class="rank__knoppen">' +
-              '<button class="rank__btn" type="button" data-op="' + i + '"' +
-                (i === 0 ? ' disabled' : '') + ' aria-label="' + esc(cap(naam)) + ' omhoog">' + pijl(true) + '</button>' +
-              '<button class="rank__btn" type="button" data-neer="' + i + '"' +
-                (i === volgorde.length - 1 ? ' disabled' : '') + ' aria-label="' + esc(cap(naam)) + ' omlaag">' + pijl(false) + '</button>' +
+              '<button class="rank__btn rank__btn--min" type="button" data-min="' + esc(naam) + '"' +
+                (punten[naam] <= 0 ? ' disabled' : '') + ' aria-label="Dram afhalen bij ' + esc(cap(naam)) + '">' + minIcon + '</button>' +
+              '<button class="rank__btn rank__btn--plus" type="button" data-plus="' + esc(naam) + '"' +
+                ' aria-label="Dram geven aan ' + esc(cap(naam)) + '">' + dramIcon + '</button>' +
             '</span>'
           : '') +
-      '</li>'
-    ).join("");
-    knopReset.hidden = !magSchuiven;
-    knopUnlock.hidden = magSchuiven || !gedeeld;
+      '</li>';
+    }).join("");
+    knopReset.hidden = !magWijzigen;
+    knopUnlock.hidden = magWijzigen || !gedeeld;
   }
 
   function meldStand(tekst){ status.textContent = tekst; }
@@ -540,8 +553,8 @@ window.codeHash = codeHash;
       const r = await fetch(SNEUVEL_DB + "?_=" + Date.now(), { cache: "no-store" });
       if (!r.ok) throw new Error("http " + r.status);
       const data = await r.json();
-      if (data && Array.isArray(data.volgorde)){
-        volgorde = schoon(data.volgorde);
+      if (data && data.punten){
+        punten = schoon(data.punten);
         bijgewerkt = data.bijgewerkt || 0;
         lokaalBewaren();
         teken();
@@ -555,7 +568,7 @@ window.codeHash = codeHash;
     }
   }
 
-  /* Schuif je snel achter elkaar, dan wachten we even en sturen we één keer
+  /* Tik je snel achter elkaar, dan wachten we even en sturen we één keer
      de eindstand. Loopt er al een verzoek, dan gaat er daarna nóg een, met de
      laatste stand — anders zou het scherm iets anders tonen dan de database. */
   function planOpslaan(){
@@ -573,7 +586,7 @@ window.codeHash = codeHash;
       const r = await fetch(SNEUVEL_DB, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ volgorde: volgorde, bijgewerkt: Date.now() })
+        body: JSON.stringify({ punten: punten, bijgewerkt: Date.now() })
       });
       if (!r.ok) throw new Error("http " + r.status);
       meldStand("zojuist bijgewerkt");
@@ -584,21 +597,21 @@ window.codeHash = codeHash;
     if (nogmaalsOpslaan){ nogmaalsOpslaan = false; schrijfWeg(); }
   }
 
-  function wissel(a, b){
-    const t = volgorde[a]; volgorde[a] = volgorde[b]; volgorde[b] = t;
+  function wijzig(naam, delta){
+    punten[naam] = Math.max(0, (punten[naam] || 0) + delta);
     lokaalBewaren();
     teken();
     planOpslaan();
     // focus terug op de knop die je net gebruikte, zodat doortikken blijft werken
-    const knop = $('[data-' + (b < a ? 'op' : 'neer') + '="' + b + '"]', lijst);
+    const knop = $('[data-' + (delta > 0 ? 'plus' : 'min') + '="' + naam + '"]', lijst);
     if (knop && !knop.disabled) knop.focus();
   }
 
   lijst.addEventListener("click", (e) => {
     const b = e.target.closest("button");
-    if (!b || b.disabled || !magSchuiven) return;
-    if (b.dataset.op   !== undefined) wissel(Number(b.dataset.op), Number(b.dataset.op) - 1);
-    if (b.dataset.neer !== undefined) wissel(Number(b.dataset.neer), Number(b.dataset.neer) + 1);
+    if (!b || b.disabled || !magWijzigen) return;
+    if (b.dataset.plus !== undefined) wijzig(b.dataset.plus, 1);
+    if (b.dataset.min  !== undefined) wijzig(b.dataset.min, -1);
   });
 
   knopUnlock.addEventListener("click", () => {
@@ -608,15 +621,15 @@ window.codeHash = codeHash;
       alert("Die code klopt niet.");
       return;
     }
-    magSchuiven = true;
+    magWijzigen = true;
     try { localStorage.setItem(SLEUTEL_CODE, SCHEIDSRECHTER_HASH); } catch(e){}
     teken();
   });
 
   knopReset.addEventListener("click", () => {
-    if (!magSchuiven) return;          // alleen de scheidsrechter
-    if (!confirm("De ranglijst terugzetten op de oorspronkelijke volgorde?")) return;
-    volgorde = MANNEN.slice();
+    if (!magWijzigen) return;          // alleen de scheidsrechter
+    if (!confirm("Alle drams terugzetten naar 0?")) return;
+    punten = schoon({});
     lokaalBewaren();
     teken();
     planOpslaan();
@@ -627,7 +640,7 @@ window.codeHash = codeHash;
   if (gedeeld){
     haalOp();
     // meekijken met wat de scheidsrechter doet, maar alleen als je kijkt
-    setInterval(() => { if (!document.hidden && !magSchuiven) haalOp(); }, 20000);
+    setInterval(() => { if (!document.hidden && !magWijzigen) haalOp(); }, 20000);
     document.addEventListener("visibilitychange", () => { if (!document.hidden) haalOp(); });
   }
 })();
