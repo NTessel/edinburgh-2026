@@ -69,6 +69,14 @@ De ranglijst gebruikt dezelfde namen als `MANNEN`. Voeg je iemand toe, dan
 verschijnt hij automatisch met 0 drams; haal je iemand weg, dan verdwijnt hij.
 Je hoeft de ranglijst zelf nergens bij te houden.
 
+**Dram aanvragen.** Iedereen (niet alleen de scheidsrechter) kan onder de
+ranglijst een dram aanvragen voor iemand anders, met een naam en een optionele
+reden. Die aanvraag komt voor iedereen zichtbaar in een wachtrijtje te staan
+("wacht op scheidsrechter"). Alleen jij als scheidsrechter ziet er twee
+knopjes bij: het whiskyglaasje kent de dram toe, het kruisje wijst hem af.
+Dit werkt alleen als `SNEUVEL_DB` is ingesteld — zonder gedeelde database is
+er niemand om iets aan te vragen, dus blijft dat blokje verborgen.
+
 ### Kaart
 Een gewone kaart van Edinburgh, bewust zonder pinnen. Wil je hem ergens anders
 laten beginnen, pas dan `KAART_MIDDEN` en `KAART_ZOOM` aan. Coördinaten vind je

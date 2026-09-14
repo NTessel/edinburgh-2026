@@ -189,6 +189,27 @@
         <button class="btn btn--ghost" type="button" id="rank-unlock">Ik ben de scheidsrechter</button>
         <button class="btn btn--ghost" type="button" id="rank-reset" hidden>Punten resetten</button>
       </div>
+
+      <div class="meld" id="meld" hidden>
+        <h3 class="meld__title">Iets gezien?</h3>
+        <p class="meld__lede">Zag je iemand iets uitspoken? Vraag hier een dram voor hem aan — de
+          scheidsrechter beslist.</p>
+        <form class="meld__form" id="meld-form">
+          <label class="meld__field">
+            <span>Wie verdient een dram?</span>
+            <select id="meld-naam" required></select>
+          </label>
+          <label class="meld__field">
+            <span>Waarom? (optioneel)</span>
+            <input id="meld-reden" type="text" maxlength="140" autocomplete="off"
+                   placeholder="bijv. viel van zijn barkruk">
+          </label>
+          <button class="btn" type="submit">Dram aanvragen</button>
+        </form>
+        <p class="meld__gelukt" id="meld-gelukt" aria-live="polite" hidden>Aangevraagd! De scheidsrechter beslist.</p>
+
+        <ul class="meld__lijst" id="meld-lijst"></ul>
+      </div>
     </div>
   </section>
 

@@ -462,11 +462,21 @@ window.codeHash = codeHash;
   const knopUnlock = $("#rank-unlock");
   const knopReset = $("#rank-reset");
 
-  /* Zonder gedeelde database mag iedereen gewoon punten geven, net als voorheen. */
+  const meldBlok  = $("#meld");
+  const meldForm  = $("#meld-form");
+  const meldNaam  = $("#meld-naam");
+  const meldReden = $("#meld-reden");
+  const meldGelukt = $("#meld-gelukt");
+  const meldLijst = $("#meld-lijst");
+
+  /* Zonder gedeelde database mag iedereen gewoon punten geven, net als voorheen.
+     Dram aanvragen heeft dan ook geen zin — er is niemand om aan te vragen. */
   let magWijzigen = !gedeeld;
   try { if (localStorage.getItem(SLEUTEL_CODE) === SCHEIDSRECHTER_HASH) magWijzigen = true; } catch(e){}
+  if (meldBlok) meldBlok.hidden = !gedeeld;
 
   let punten = {};
+  let meldingen = [];
   let bijgewerkt = 0;
   let bezigMetOpslaan = false;
   let nogmaalsOpslaan = false;
@@ -483,14 +493,26 @@ window.codeHash = codeHash;
     return out;
   }
 
-  function lokaalLezen(){
-    try { return schoon(JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e){ return schoon({}); }
-  }
-  function lokaalBewaren(){
-    try { localStorage.setItem(KEY, JSON.stringify(punten)); } catch(e){ /* privemodus */ }
+  /* Alleen geldige meldingen (bestaand doel, met id) overleven een opschoning.
+     Nooit meer dan 30 bewaren, anders groeit dit blok het hele weekend door. */
+  function schoonMeldingen(ruw){
+    const lijst = Array.isArray(ruw) ? ruw : [];
+    return lijst
+      .filter(m => m && typeof m.id === "string" && MANNEN.includes(m.doel))
+      .slice(-30);
   }
 
-  punten = lokaalLezen();
+  function lokaalLezen(){
+    try {
+      const data = JSON.parse(localStorage.getItem(KEY) || "{}");
+      return { punten: schoon(data.punten), meldingen: schoonMeldingen(data.meldingen) };
+    } catch(e){ return { punten: schoon({}), meldingen: [] }; }
+  }
+  function lokaalBewaren(){
+    try { localStorage.setItem(KEY, JSON.stringify({ punten, meldingen })); } catch(e){ /* privemodus */ }
+  }
+
+  ({ punten, meldingen } = lokaalLezen());
 
   /* ── iconen ── */
   const kroon =
@@ -503,6 +525,9 @@ window.codeHash = codeHash;
   const minIcon =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
     'stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>';
+  const kruisIcon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+    'stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
 
   function dramTekst(n){ return n + (n === 1 ? " dram" : " drams"); }
 
@@ -535,6 +560,29 @@ window.codeHash = codeHash;
     knopUnlock.hidden = magWijzigen || !gedeeld;
   }
 
+  /* ── meldingen: door wie dan ook aangevraagd, alleen de scheidsrechter beslist ── */
+  function tekenMeldNaamOpties(){
+    if (!meldNaam) return;
+    meldNaam.innerHTML = MANNEN.map(n => '<option value="' + esc(n) + '">' + esc(cap(n)) + '</option>').join("");
+  }
+
+  function tekenMeldingen(){
+    if (!meldLijst) return;
+    if (meldingen.length === 0){ meldLijst.innerHTML = ""; return; }
+    meldLijst.innerHTML = meldingen.map(m =>
+      '<li class="meld__item">' +
+        '<span class="meld__tekst"><strong>' + esc(cap(m.doel)) + '</strong>' +
+          (m.reden ? ' — ' + esc(m.reden) : ' verdient een dram') + '</span>' +
+        (magWijzigen
+          ? '<span class="meld__acties">' +
+              '<button class="rank__btn rank__btn--min" type="button" data-wijs-af="' + esc(m.id) + '" aria-label="Aanvraag afwijzen">' + kruisIcon + '</button>' +
+              '<button class="rank__btn rank__btn--plus" type="button" data-keur-goed="' + esc(m.id) + '" aria-label="Dram toekennen">' + dramIcon + '</button>' +
+            '</span>'
+          : '<span class="meld__status">wacht op scheidsrechter</span>') +
+      '</li>'
+    ).join("");
+  }
+
   function meldStand(tekst){ status.textContent = tekst; }
 
   function tijdTekst(ms){
@@ -555,9 +603,11 @@ window.codeHash = codeHash;
       const data = await r.json();
       if (data && data.punten){
         punten = schoon(data.punten);
+        meldingen = schoonMeldingen(data.meldingen);
         bijgewerkt = data.bijgewerkt || 0;
         lokaalBewaren();
         teken();
+        tekenMeldingen();
         meldStand(tijdTekst(bijgewerkt));
       } else {
         meldStand("Nog geen stand gedeeld.");
@@ -586,7 +636,7 @@ window.codeHash = codeHash;
       const r = await fetch(SNEUVEL_DB, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ punten: punten, bijgewerkt: Date.now() })
+        body: JSON.stringify({ punten: punten, meldingen: meldingen, bijgewerkt: Date.now() })
       });
       if (!r.ok) throw new Error("http " + r.status);
       meldStand("zojuist bijgewerkt");
@@ -624,6 +674,7 @@ window.codeHash = codeHash;
     magWijzigen = true;
     try { localStorage.setItem(SLEUTEL_CODE, SCHEIDSRECHTER_HASH); } catch(e){}
     teken();
+    tekenMeldingen();
   });
 
   knopReset.addEventListener("click", () => {
@@ -635,7 +686,50 @@ window.codeHash = codeHash;
     planOpslaan();
   });
 
+  if (meldForm){
+    tekenMeldNaamOpties();
+
+    meldForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const doel = meldNaam.value;
+      if (!MANNEN.includes(doel)) return;
+      meldingen.push({
+        id: "m" + Date.now() + Math.random().toString(36).slice(2, 6),
+        doel: doel,
+        reden: meldReden.value.trim().slice(0, 140),
+        tijd: Date.now()
+      });
+      meldingen = meldingen.slice(-30);
+      lokaalBewaren();
+      tekenMeldingen();
+      planOpslaan();
+      meldForm.reset();
+      meldGelukt.hidden = false;
+      clearTimeout(meldForm._gelukt);
+      meldForm._gelukt = setTimeout(() => { meldGelukt.hidden = true; }, 4000);
+    });
+  }
+
+  if (meldLijst){
+    meldLijst.addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (!b || !magWijzigen) return;
+      const idKeur = b.dataset.keurGoed, idAfwijs = b.dataset.wijsAf;
+      const id = idKeur || idAfwijs;
+      if (!id) return;
+      const melding = meldingen.find(m => m.id === id);
+      if (!melding) return;
+      if (idKeur) punten[melding.doel] = Math.max(0, (punten[melding.doel] || 0) + 1);
+      meldingen = meldingen.filter(m => m.id !== id);
+      lokaalBewaren();
+      teken();
+      tekenMeldingen();
+      planOpslaan();
+    });
+  }
+
   teken();
+  tekenMeldingen();
 
   if (gedeeld){
     haalOp();

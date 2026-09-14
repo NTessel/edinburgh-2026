@@ -769,6 +769,54 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
 }
 .rank__bar{ display: flex; flex-wrap: wrap; gap: 10px; }
 
+/* ── meldingen: iedereen kan een dram aanvragen, de scheidsrechter beslist ── */
+.meld{
+  margin: 22px 0 0;
+  padding: 14px 14px 12px;
+  border: 1px solid rgba(36,26,24,.32);
+  border-radius: var(--brush-a);
+  background: rgba(241,234,219,.5);
+}
+.meld__title{
+  font-family: var(--font-hand);
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  transform: rotate(-.6deg);
+  transform-origin: left center;
+}
+.meld__lede{ margin: 0 0 14px; font-size: 15px; color: var(--ink-soft); }
+.meld__form{ display: flex; flex-direction: column; gap: 10px; }
+.meld__field{ display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--ink-soft); }
+.meld__field select,
+.meld__field input{
+  min-height: 48px;                  /* ruim boven 16px lettergrootte: iOS zoomt niet in */
+  padding: 0 12px;
+  border: 1px solid rgba(36,26,24,.45);
+  border-radius: var(--brush-s);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+.meld__field select:focus,
+.meld__field input:focus{ outline: none; border-color: var(--amber-deep); }
+.meld__form .btn{ align-self: flex-start; }
+.meld__gelukt{ margin: 10px 0 0; font-size: 15px; font-style: italic; color: var(--amber-deep); }
+
+.meld__lijst{ list-style: none; margin: 16px 0 0; padding: 12px 0 0; border-top: 1px dashed rgba(91,79,73,.32); }
+.meld__lijst:empty{ margin: 0; padding: 0; border: 0; }
+.meld__item{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 7px 0;
+}
+.meld__tekst{ flex: 1 1 160px; min-width: 0; font-size: 15px; }
+.meld__status{ flex: 0 0 auto; font-size: 13px; font-style: italic; color: var(--ink-soft); }
+.meld__acties{ flex: 0 0 auto; display: flex; gap: 2px; margin-left: auto; }
+
 .btn{
   display: inline-flex;
   align-items: center;
