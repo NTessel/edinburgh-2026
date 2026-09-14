@@ -144,6 +144,27 @@ img{ max-width: 100%; height: auto; display: block; }
   text-overflow: ellipsis;
   transform: rotate(-1deg);
 }
+.nav__actions{ flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.nav__fx{
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid rgba(36,26,24,.38);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: 19px;
+  font-weight: 700;
+  text-decoration: none;
+  transform: rotate(-1deg);
+  -webkit-tap-highlight-color: transparent;
+}
+.nav__fx:active{ transform: rotate(-1deg) scale(.93); }
 .nav__toggle{
   flex: 0 0 auto;
   display: flex;
@@ -771,7 +792,7 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
 }
 .rank__bar{ display: flex; flex-wrap: wrap; gap: 10px; }
 
-/* ── meldingen: iedereen kan een borrel aanvragen, de scheidsrechter beslist ── */
+/* ── meldingen: iedereen kan een pintje aanvragen, de scheidsrechter beslist ── */
 .meld{
   margin: 22px 0 0;
   padding: 14px 14px 12px;

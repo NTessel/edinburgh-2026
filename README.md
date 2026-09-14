@@ -60,23 +60,23 @@ Zolang `PROGRAMMA_ZICHTBAAR` op `false` staat, ziet iedereen het blokje
 Zet hem op `true` zodra het programma vaststaat, en alles verschijnt in één keer.
 
 ### De sneuvelkoning
-Iedereen begint op 0 borrels. Als scheidsrechter tik je op het whiskyglaasje
-naast een naam om er een borrel bij te geven, en op het streepje om er eentje
+Iedereen begint op 0 pintjes. Als scheidsrechter tik je op het bierglaasje
+naast een naam om er een pintje bij te geven, en op het streepje om er eentje
 af te halen (voor als je je vertikt hebt). De lijst sorteert zichzelf: wie de
-meeste borrels heeft staat bovenaan en krijgt de kroon. Onder elke naam staat
+meeste pintjes heeft staat bovenaan en krijgt de kroon. Onder elke naam staat
 ook een titel die meebeweegt met het aantal — "nog fris", "op dreef",
-"gesneuveld", enzovoort. Die titels + drempels staan in `BORREL_TITELS`
+"gesneuveld", enzovoort. Die titels + drempels staan in `PINTJE_TITELS`
 bovenaan `script.js`.
 
 De ranglijst gebruikt dezelfde namen als `MANNEN`. Voeg je iemand toe, dan
-verschijnt hij automatisch met 0 borrels; haal je iemand weg, dan verdwijnt hij.
+verschijnt hij automatisch met 0 pintjes; haal je iemand weg, dan verdwijnt hij.
 Je hoeft de ranglijst zelf nergens bij te houden.
 
-**Borrel aanvragen.** Iedereen (niet alleen de scheidsrechter) kan onder de
-ranglijst een borrel aanvragen voor iemand anders, met een naam en een optionele
+**Pintje aanvragen.** Iedereen (niet alleen de scheidsrechter) kan onder de
+ranglijst een pintje aanvragen voor iemand anders, met een naam en een optionele
 reden. Die aanvraag komt voor iedereen zichtbaar in een wachtrijtje te staan
 ("wacht op scheidsrechter"). Alleen jij als scheidsrechter ziet er twee
-knopjes bij: het whiskyglaasje kent de borrel toe, het kruisje wijst hem af.
+knopjes bij: het bierglaasje kent het pintje toe, het kruisje wijst het af.
 Dit werkt alleen als `SNEUVEL_DB` is ingesteld — zonder gedeelde database is
 er niemand om iets aan te vragen, dus blijft dat blokje verborgen.
 
@@ -198,7 +198,7 @@ beginscherm*. Hij opent dan zonder browserbalk, als een app.
 https://edinburgh-2026-default-rtdb.europe-west1.firebasedatabase.app/sneuvel.json
 ```
 
-Iedereen ziet dezelfde lijst, alleen de scheidsrechter kan borrels geven. De code is
+Iedereen ziet dezelfde lijst, alleen de scheidsrechter kan pintjes geven. De code is
 **`kilt2026`** (hoofdletters maken niet uit). Je hoeft hier niets meer voor te doen.
 
 De stappen hieronder staan er voor als je het ooit opnieuw moet opzetten, of
@@ -239,7 +239,7 @@ naar een ander project wilt verhuizen.
   hij is bijgewerkt. Geen knoppen: je kunt alleen kijken.
 - Onderaan staat een knop **"Ik ben de scheidsrechter"**. Daar typ je de code in.
   Klopt hij, dan verschijnen het glaasje en het streepje per naam, en kun jij
-  borrels geven of afhalen. Elke wijziging gaat meteen naar de database, en de
+  pintjes geven of afhalen. Elke wijziging gaat meteen naar de database, en de
   anderen zien hem binnen twintig seconden.
 - Je telefoon onthoudt dat je de scheidsrechter bent. Je typt de code dus
   één keer, niet elke keer.
