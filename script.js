@@ -10,11 +10,10 @@ const VERTREK = Date.UTC(2026, 9, 2, 8, 30);   // maand 9 = oktober
 /* ── DE MANNEN ───────────────────────────────────────────────────────────
    Alleen voornamen, in kleine letters. De foto wordt images/<naam>.jpg
    en op de site verschijnt de naam met een hoofdletter.
-   Voeg iemand toe door één woord aan de lijst te plakken.
-   NU NOG PLACEHOLDERS — vervang door de echte voornamen.            */
+   Voeg iemand toe door één woord aan de lijst te plakken.            */
 const MANNEN = [
-  "niels", "danny", "joost", "bram", "sander", "thijs",
-  "ruben", "maarten", "koen", "jeroen", "wouter"
+  "bart", "danny", "jerry", "jessey", "marjos", "mick",
+  "mitchell", "niels", "sander", "sil", "tim"
 ];
 
 /* Staat het programma al vast? Zet op true zodra je het wilt tonen; de
