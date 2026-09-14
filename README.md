@@ -60,22 +60,30 @@ Zolang `PROGRAMMA_ZICHTBAAR` op `false` staat, ziet iedereen het blokje
 Zet hem op `true` zodra het programma vaststaat, en alles verschijnt in één keer.
 
 ### De sneuvelkoning
-Iedereen begint op 0 drams. Als scheidsrechter tik je op het whiskyglaasje
-naast een naam om er een dram bij te geven, en op het streepje om er eentje
+Iedereen begint op 0 borrels. Als scheidsrechter tik je op het whiskyglaasje
+naast een naam om er een borrel bij te geven, en op het streepje om er eentje
 af te halen (voor als je je vertikt hebt). De lijst sorteert zichzelf: wie de
-meeste drams heeft staat bovenaan en krijgt de kroon.
+meeste borrels heeft staat bovenaan en krijgt de kroon. Onder elke naam staat
+ook een titel die meebeweegt met het aantal — "nog fris", "op dreef",
+"gesneuveld", enzovoort. Die titels + drempels staan in `BORREL_TITELS`
+bovenaan `script.js`.
 
 De ranglijst gebruikt dezelfde namen als `MANNEN`. Voeg je iemand toe, dan
-verschijnt hij automatisch met 0 drams; haal je iemand weg, dan verdwijnt hij.
+verschijnt hij automatisch met 0 borrels; haal je iemand weg, dan verdwijnt hij.
 Je hoeft de ranglijst zelf nergens bij te houden.
 
-**Dram aanvragen.** Iedereen (niet alleen de scheidsrechter) kan onder de
-ranglijst een dram aanvragen voor iemand anders, met een naam en een optionele
+**Borrel aanvragen.** Iedereen (niet alleen de scheidsrechter) kan onder de
+ranglijst een borrel aanvragen voor iemand anders, met een naam en een optionele
 reden. Die aanvraag komt voor iedereen zichtbaar in een wachtrijtje te staan
 ("wacht op scheidsrechter"). Alleen jij als scheidsrechter ziet er twee
-knopjes bij: het whiskyglaasje kent de dram toe, het kruisje wijst hem af.
+knopjes bij: het whiskyglaasje kent de borrel toe, het kruisje wijst hem af.
 Dit werkt alleen als `SNEUVEL_DB` is ingesteld — zonder gedeelde database is
 er niemand om iets aan te vragen, dus blijft dat blokje verborgen.
+
+### De Schotse toost
+Onder de countdown staat bij elk bezoek een andere Gaelic of Schotse toost,
+willekeurig gekozen uit `TOOSTEN` bovenaan `script.js`. Voeg er gerust meer
+toe: elke regel is `[de zin, de Nederlandse vertaling/uitleg]`.
 
 ### Kaart
 Een gewone kaart van Edinburgh, bewust zonder pinnen. Wil je hem ergens anders
@@ -190,7 +198,7 @@ beginscherm*. Hij opent dan zonder browserbalk, als een app.
 https://edinburgh-2026-default-rtdb.europe-west1.firebasedatabase.app/sneuvel.json
 ```
 
-Iedereen ziet dezelfde lijst, alleen de scheidsrechter kan drams geven. De code is
+Iedereen ziet dezelfde lijst, alleen de scheidsrechter kan borrels geven. De code is
 **`kilt2026`** (hoofdletters maken niet uit). Je hoeft hier niets meer voor te doen.
 
 De stappen hieronder staan er voor als je het ooit opnieuw moet opzetten, of
@@ -231,7 +239,7 @@ naar een ander project wilt verhuizen.
   hij is bijgewerkt. Geen knoppen: je kunt alleen kijken.
 - Onderaan staat een knop **"Ik ben de scheidsrechter"**. Daar typ je de code in.
   Klopt hij, dan verschijnen het glaasje en het streepje per naam, en kun jij
-  drams geven of afhalen. Elke wijziging gaat meteen naar de database, en de
+  borrels geven of afhalen. Elke wijziging gaat meteen naar de database, en de
   anderen zien hem binnen twintig seconden.
 - Je telefoon onthoudt dat je de scheidsrechter bent. Je typt de code dus
   één keer, niet elke keer.

@@ -118,6 +118,27 @@ const KLIMAAT = {
 const WEER_OPMERKING =
   "Er bestaat geen slecht weer, alleen verkeerde jassen. Neem toch een jas mee.";
 
+/* ── SCHOTSE TOOST ──────────────────────────────────────────────────────
+   Bij elke pagina-laad een willekeurige, onder de countdown. Voeg gerust
+   iets toe: [Gaelic of Schots, Nederlandse vertaling/uitleg].          */
+const TOOSTEN = [
+  ["Slàinte mhath!", "op je gezondheid — Gaelic"],
+  ["Ceud mìle fàilte!", "honderdduizend keer welkom — Gaelic"],
+  ["Lang may yer lum reek!", "moge je schoorsteen nog lang roken — Schots voor een lang leven"],
+  ["Here's tae us, wha's like us?", "op ons — wie is er nou zoals wij? — Schots"]
+];
+
+/* ── SNEUVELKONING: TITELS PER AANTAL BORRELS ─────────────────────────────
+   Van laag naar hoog; de hoogst gehaalde drempel telt. Pas gerust de
+   teksten of de drempels aan.                                          */
+const BORREL_TITELS = [
+  [0, "nog fris"],
+  [1, "warmgedraaid"],
+  [3, "op dreef"],
+  [5, "stevig aangeschoten"],
+  [8, "gesneuveld"]
+];
+
 /* ═══════════════════════════════════════════════════════════════════════
    Hieronder hoef je niets meer aan te passen.
    ═══════════════════════════════════════════════════════════════════════ */
@@ -163,6 +184,13 @@ function icoonSvg(naam){
 }
 
 /* ═══════════ 1. COUNTDOWN ═══════════ */
+(function toost(){
+  const el = $("#cd-toost");
+  if (!el || TOOSTEN.length === 0) return;
+  const [zin, uitleg] = TOOSTEN[Math.floor(Math.random() * TOOSTEN.length)];
+  el.innerHTML = '<em>' + esc(zin) + '</em> — ' + esc(uitleg);
+})();
+
 (function countdown(){
   const d = $("#cd-d"), h = $("#cd-h"), m = $("#cd-m");
   if (!d) return;
@@ -417,8 +445,7 @@ function klimaatBlok(extraRegel){
           '<path d="' + ring + '" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
           '<path d="M12 30C18 17 32 8 47 7.4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" opacity=".5" vector-effect="non-scaling-stroke"/>' +
         '</svg>' +
-      '</div>' +
-      '<span class="portrait__name">' + esc(cap(naam)) + '</span>';
+      '</div>';
 
     const img = $("img", li);
     bewaakAfbeelding(img, () => {
@@ -470,7 +497,7 @@ window.codeHash = codeHash;
   const meldLijst = $("#meld-lijst");
 
   /* Zonder gedeelde database mag iedereen gewoon punten geven, net als voorheen.
-     Dram aanvragen heeft dan ook geen zin — er is niemand om aan te vragen. */
+     Een borrel aanvragen heeft dan ook geen zin — er is niemand om aan te vragen. */
   let magWijzigen = !gedeeld;
   try { if (localStorage.getItem(SLEUTEL_CODE) === SCHEIDSRECHTER_HASH) magWijzigen = true; } catch(e){}
   if (meldBlok) meldBlok.hidden = !gedeeld;
@@ -483,7 +510,7 @@ window.codeHash = codeHash;
   let opslaanTimer = null;
 
   /* Een opgeslagen stand moet meebewegen met MANNEN: namen die weg zijn
-     vallen af, nieuwe namen beginnen op 0 drams. Ook oude standen (van vóór
+     vallen af, nieuwe namen beginnen op 0 borrels. Ook oude standen (van vóór
      het puntensysteem, toen dit nog een geordende lijst was) vangen we hier
      netjes op: die tellen simpelweg als "iedereen op 0". */
   function schoon(ruw){
@@ -521,7 +548,7 @@ window.codeHash = codeHash;
     '<path d="M3.4 8.2c1.5 1.1 3 2.3 4.5 3.4 1.3-2 2.7-4 4.1-6 1.4 2 2.8 4 4.1 6 1.5-1.1 3-2.3 4.5-3.4' +
     'c-.6 3.4-1.2 6.8-1.7 10.2-4.6.5-9.2.5-13.8 0-.6-3.4-1.1-6.8-1.7-10.2z"/>' +
     '<path d="M7.2 15.4c3.2-.5 6.4-.5 9.6 0"/></svg>';
-  const dramIcon = icoonSvg("whisky");
+  const borrelIcon = icoonSvg("whisky");
   const minIcon =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
     'stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>';
@@ -529,7 +556,14 @@ window.codeHash = codeHash;
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
     'stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
 
-  function dramTekst(n){ return n + (n === 1 ? " dram" : " drams"); }
+  function borrelTekst(n){ return n + (n === 1 ? " borrel" : " borrels"); }
+
+  /* Hoogst gehaalde drempel uit BORREL_TITELS. */
+  function titelVoor(n){
+    let titel = BORREL_TITELS[0][1];
+    for (const [drempel, tekst] of BORREL_TITELS) if (n >= drempel) titel = tekst;
+    return titel;
+  }
 
   /* Sortering is puur op puntental; bij gelijke stand houden we de volgorde
      van MANNEN aan, zodat de lijst niet random door elkaar springt. */
@@ -539,19 +573,20 @@ window.codeHash = codeHash;
 
   function teken(){
     const volgorde = gesorteerd();
-    const meesteDrams = Math.max(0, ...MANNEN.map(n => punten[n]));
+    const meesteBorrels = Math.max(0, ...MANNEN.map(n => punten[n]));
     lijst.innerHTML = volgorde.map((naam, i) => {
-      const isKoning = meesteDrams > 0 && punten[naam] === meesteDrams;
+      const isKoning = meesteBorrels > 0 && punten[naam] === meesteBorrels;
       return '<li class="rank' + (isKoning ? " rank--koning" : "") + '">' +
         '<span class="rank__pos">' + (isKoning ? kroon : (i + 1)) + '</span>' +
-        '<span class="rank__naam">' + esc(cap(naam)) + '</span>' +
-        '<span class="rank__punten">' + dramTekst(punten[naam]) + '</span>' +
+        '<span class="rank__naam">' + esc(cap(naam)) +
+          '<small class="rank__titel">' + esc(titelVoor(punten[naam])) + '</small></span>' +
+        '<span class="rank__punten">' + borrelTekst(punten[naam]) + '</span>' +
         (magWijzigen
           ? '<span class="rank__knoppen">' +
               '<button class="rank__btn rank__btn--min" type="button" data-min="' + esc(naam) + '"' +
-                (punten[naam] <= 0 ? ' disabled' : '') + ' aria-label="Dram afhalen bij ' + esc(cap(naam)) + '">' + minIcon + '</button>' +
+                (punten[naam] <= 0 ? ' disabled' : '') + ' aria-label="Borrel afhalen bij ' + esc(cap(naam)) + '">' + minIcon + '</button>' +
               '<button class="rank__btn rank__btn--plus" type="button" data-plus="' + esc(naam) + '"' +
-                ' aria-label="Dram geven aan ' + esc(cap(naam)) + '">' + dramIcon + '</button>' +
+                ' aria-label="Borrel geven aan ' + esc(cap(naam)) + '">' + borrelIcon + '</button>' +
             '</span>'
           : '') +
       '</li>';
@@ -572,11 +607,11 @@ window.codeHash = codeHash;
     meldLijst.innerHTML = meldingen.map(m =>
       '<li class="meld__item">' +
         '<span class="meld__tekst"><strong>' + esc(cap(m.doel)) + '</strong>' +
-          (m.reden ? ' — ' + esc(m.reden) : ' verdient een dram') + '</span>' +
+          (m.reden ? ' — ' + esc(m.reden) : ' verdient een borrel') + '</span>' +
         (magWijzigen
           ? '<span class="meld__acties">' +
               '<button class="rank__btn rank__btn--min" type="button" data-wijs-af="' + esc(m.id) + '" aria-label="Aanvraag afwijzen">' + kruisIcon + '</button>' +
-              '<button class="rank__btn rank__btn--plus" type="button" data-keur-goed="' + esc(m.id) + '" aria-label="Dram toekennen">' + dramIcon + '</button>' +
+              '<button class="rank__btn rank__btn--plus" type="button" data-keur-goed="' + esc(m.id) + '" aria-label="Borrel toekennen">' + borrelIcon + '</button>' +
             '</span>'
           : '<span class="meld__status">wacht op scheidsrechter</span>') +
       '</li>'
@@ -679,7 +714,7 @@ window.codeHash = codeHash;
 
   knopReset.addEventListener("click", () => {
     if (!magWijzigen) return;          // alleen de scheidsrechter
-    if (!confirm("Alle drams terugzetten naar 0?")) return;
+    if (!confirm("Alle borrels terugzetten naar 0?")) return;
     punten = schoon({});
     lokaalBewaren();
     teken();
