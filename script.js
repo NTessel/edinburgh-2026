@@ -23,7 +23,7 @@ const PROGRAMMA_ZICHTBAAR = true;
 /* ── HET PROGRAMMA ───────────────────────────────────────────────────────
    Per dag: label voor de tab, de datum (jaar, maand-1, dag) en de items.
    icoon: trein · vliegtuig · koffer · bed · kasteel · bord · rugby ·
-          bier · koffie · whisky · bijl                                  */
+          bier · koffie · whisky · bijl · knipoog                        */
 const PROGRAMMA = [
   {
     tab: "Vr", datum: [2026, 9, 2], titel: "Vrijdag 2 oktober",
@@ -32,10 +32,10 @@ const PROGRAMMA = [
       { tijd: "13:10", icoon: "vliegtuig", titel: "Vliegen",         desc: "EZY3302" },
       { tijd: "13:45", icoon: "koffer",    titel: "Aankomst Edinburgh" },
       { tijd: "15:00", icoon: "bed",       titel: "Inchecken" },
-      { tijd: "16:00", icoon: "kasteel",   titel: "Bier, whisky, eten & kasteel" },
+      { tijd: "16:00", icoon: "kasteel",   titel: "Bier, whisky, snelle lunch & kasteel" },
       { tijd: "18:00", icoon: "bord",      titel: "Eten" },
       { tijd: "19:00", icoon: "rugby",     titel: "Rugbywedstrijd",  desc: "Aftrap 19:45" },
-      { tijd: "21:00", icoon: "bier",      titel: "Old Town",       desc: "De avond en nacht in" }
+      { tijd: "?",     icoon: "bier",      titel: "Old Town",       desc: "De avond en nacht in" }
     ]
   },
   {
@@ -46,7 +46,8 @@ const PROGRAMMA = [
       { tijd: "14:00", icoon: "bord",   titel: "Lunch" },
       { tijd: "16:00", icoon: "bier",   titel: "Old Town",   desc: "Rondslenteren, de stad in" },
       { tijd: "19:00", icoon: "bord",   titel: "Avondeten" },
-      { tijd: "21:00", icoon: "bier",   titel: "Old Town",   desc: "Stappen" }
+      { tijd: "21:00", icoon: "bier",   titel: "Old Town",   desc: "Stappen" },
+      { tijd: "?",     icoon: "knipoog", titel: "Optioneel: stripclub" }
     ]
   },
   {
@@ -175,7 +176,8 @@ const ICONEN = {
   bier: '<path d="M6.6 6.7h8.6l-.6 13.1c0 .8-.7 1.4-1.5 1.4H8.7c-.8 0-1.4-.6-1.5-1.4z"/><path d="M15.1 9.4h2.6c1 0 1.8.9 1.7 1.9l-.3 3c-.1 1-.9 1.7-1.8 1.7h-2.5M7 10.2c2.6.9 5.3.9 8 0M8.8 6.6c-.6-1.3.2-2.8 1.6-2.9"/>',
   koffie: '<path d="M4.8 8.4h11.4l-.6 9.3c-.1 1.6-1.4 2.8-3 2.8H8.4c-1.6 0-2.9-1.2-3-2.8z"/><path d="M16.1 10.6h1.8c1.4 0 2.5 1.2 2.4 2.6-.1 1.4-1.3 2.4-2.7 2.4h-1.7M8 5.6c-.5-1 .1-2 1-2.2M11.6 5.5c-.5-1 .1-2 1-2.2"/>',
   whisky: '<path d="M6.4 6.6h11.2l-1 11.5c-.1.9-.8 1.5-1.7 1.5H9.1c-.9 0-1.6-.6-1.7-1.5z"/><path d="M6.9 13.1c1.7 1 3.4 1.2 5 .5 1.7-.7 3.4-.6 5 .3M9.4 20.9h5.3"/>',
-  bijl: '<path d="M13.9 3.4c3 .2 6 2.2 6.6 5.2-2.2 1.8-5.1 2.2-7.8 1.4"/><path d="M13.7 3.5c-2.3 1.7-3.6 4-3.8 6.7 1 .4 1.9.6 2.8.8M11 9.7 3.9 18.4c-.5.6-.4 1.5.2 2 .6.5 1.5.4 2-.2l6.8-8.9"/>'
+  bijl: '<path d="M13.9 3.4c3 .2 6 2.2 6.6 5.2-2.2 1.8-5.1 2.2-7.8 1.4"/><path d="M13.7 3.5c-2.3 1.7-3.6 4-3.8 6.7 1 .4 1.9.6 2.8.8M11 9.7 3.9 18.4c-.5.6-.4 1.5.2 2 .6.5 1.5.4 2-.2l6.8-8.9"/>',
+  knipoog: '<circle cx="12" cy="12" r="8.4"/><path d="M8.4 10.2h.1M13.8 10.5c.9-.6 2-.6 2.9 0M8.6 14.6c1 1.3 4.8 1.3 5.8 0"/>'
 };
 function icoonSvg(naam){
   const d = ICONEN[naam] || ICONEN.bier;
@@ -326,6 +328,7 @@ function klimaatBlok(extraRegel){
   const alles = [];
   PROGRAMMA.forEach((dag, di) => {
     dag.items.forEach((it, ii) => {
+      if (!/^\d{1,2}:\d{2}$/.test(it.tijd)) return;   // "?" e.d.: tijd onbekend, telt niet mee voor "nu"
       const [u, mi] = it.tijd.split(":").map(Number);
       alles.push({ di, ii, t: new Date(dag.datum[0], dag.datum[1], dag.datum[2], u, mi).getTime() });
     });
