@@ -23,7 +23,7 @@ const PROGRAMMA_ZICHTBAAR = true;
 /* ── HET PROGRAMMA ───────────────────────────────────────────────────────
    Per dag: label voor de tab, de datum (jaar, maand-1, dag) en de items.
    icoon: trein · vliegtuig · koffer · bed · kasteel · bord · rugby ·
-          bier · koffie · whisky · bijl · knipoog                        */
+          bier · koffie · whisky · bijl · vrouw                          */
 const PROGRAMMA = [
   {
     tab: "Vr", datum: [2026, 9, 2], titel: "Vrijdag 2 oktober",
@@ -47,14 +47,14 @@ const PROGRAMMA = [
       { tijd: "16:00", icoon: "bier",   titel: "Old Town",   desc: "Rondslenteren, de stad in" },
       { tijd: "19:00", icoon: "bord",   titel: "Avondeten" },
       { tijd: "21:00", icoon: "bier",   titel: "Old Town",   desc: "Stappen" },
-      { tijd: "?",     icoon: "knipoog", titel: "Optioneel: stripclub" }
+      { tijd: "?",     icoon: "vrouw",   titel: "Optioneel: stripclub" }
     ]
   },
   {
     tab: "Zo", datum: [2026, 9, 4], titel: "Zondag 4 oktober",
     items: [
       { tijd: "10:00", icoon: "koffie",    titel: "Ontbijt" },
-      { tijd: "12:00", icoon: "bijl",      titel: "Game of Throws", desc: "Bijlgooien" },
+      { tijd: "12:00", icoon: "bijl",      titel: "Game of Throws" },
       { tijd: "14:00", icoon: "bier",      titel: "Terras / lunch" },
       { tijd: "16:00", icoon: "koffer",    titel: "Richting vliegveld", desc: "Eerst nog inpakken" },
       { tijd: "18:20", icoon: "vliegtuig", titel: "Terugvlucht",    desc: "EZY3303" }
@@ -177,7 +177,7 @@ const ICONEN = {
   koffie: '<path d="M4.8 8.4h11.4l-.6 9.3c-.1 1.6-1.4 2.8-3 2.8H8.4c-1.6 0-2.9-1.2-3-2.8z"/><path d="M16.1 10.6h1.8c1.4 0 2.5 1.2 2.4 2.6-.1 1.4-1.3 2.4-2.7 2.4h-1.7M8 5.6c-.5-1 .1-2 1-2.2M11.6 5.5c-.5-1 .1-2 1-2.2"/>',
   whisky: '<path d="M6.4 6.6h11.2l-1 11.5c-.1.9-.8 1.5-1.7 1.5H9.1c-.9 0-1.6-.6-1.7-1.5z"/><path d="M6.9 13.1c1.7 1 3.4 1.2 5 .5 1.7-.7 3.4-.6 5 .3M9.4 20.9h5.3"/>',
   bijl: '<path d="M13.9 3.4c3 .2 6 2.2 6.6 5.2-2.2 1.8-5.1 2.2-7.8 1.4"/><path d="M13.7 3.5c-2.3 1.7-3.6 4-3.8 6.7 1 .4 1.9.6 2.8.8M11 9.7 3.9 18.4c-.5.6-.4 1.5.2 2 .6.5 1.5.4 2-.2l6.8-8.9"/>',
-  knipoog: '<circle cx="12" cy="12" r="8.4"/><path d="M8.4 10.2h.1M13.8 10.5c.9-.6 2-.6 2.9 0M8.6 14.6c1 1.3 4.8 1.3 5.8 0"/>'
+  vrouw: '<circle cx="12" cy="5.4" r="2.5"/><path d="M8.7 9.4h6.6l1.8 7.6h-3v5h-3.2v-5h-3z"/>'
 };
 function icoonSvg(naam){
   const d = ICONEN[naam] || ICONEN.bier;
