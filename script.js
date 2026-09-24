@@ -20,9 +20,11 @@ const MANNEN = [
    tijdlijn hieronder staat klaar. Op false zie je het "volgt nog"-blokje. */
 const PROGRAMMA_ZICHTBAAR = true;
 
-/* Leuk slotje voor het programma: pas het antwoord goed op, dan blijft het
-   voor die telefoon onthouden (localStorage) en hoeft niemand het twee keer
-   in te typen. Hoofdletters/spaties maken niet uit, zie antwoordGoed(). */
+/* Leuk slotje voor het programma: goed antwoord blijft voor die telefoon
+   onthouden (localStorage), dus niemand hoeft het twee keer in te typen. */
+const PROGRAMMA_SLOT_LEDE =
+  "Dat geven we niet zomaar weg. Verdiep je eerst maar even in de geschiedenis " +
+  "van je bestemming.";
 const PROGRAMMA_VRAAG = "In welk jaar werd Edinburgh de hoofdstad van Schotland?";
 const PROGRAMMA_ANTWOORD = "1437";
 
@@ -329,7 +331,7 @@ function klimaatBlok(extraRegel){
   if (!PROGRAMMA_ZICHTBAAR) return;      // het "volgt nog"-blokje staat al in de HTML
 
   const SLEUTEL = "programma-ontgrendeld";
-  const slot = $("#programma-slot"), vraag = $("#slot-vraag"),
+  const slot = $("#programma-slot"), lede = $("#slot-lede"), vraag = $("#slot-vraag"),
         form = $("#slot-form"), input = $("#slot-input"), fout = $("#slot-fout");
 
   function toon(){
@@ -344,6 +346,7 @@ function klimaatBlok(extraRegel){
   if (ontgrendeld || !slot){
     toon();
   } else {
+    lede.textContent = PROGRAMMA_SLOT_LEDE;
     vraag.textContent = PROGRAMMA_VRAAG;
     form.addEventListener("submit", (e) => {
       e.preventDefault();
