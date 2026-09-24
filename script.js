@@ -20,6 +20,12 @@ const MANNEN = [
    tijdlijn hieronder staat klaar. Op false zie je het "volgt nog"-blokje. */
 const PROGRAMMA_ZICHTBAAR = true;
 
+/* Leuk slotje voor het programma: pas het antwoord goed op, dan blijft het
+   voor die telefoon onthouden (localStorage) en hoeft niemand het twee keer
+   in te typen. Hoofdletters/spaties maken niet uit, zie antwoordGoed(). */
+const PROGRAMMA_VRAAG = "In welk jaar werd Edinburgh de hoofdstad van Schotland?";
+const PROGRAMMA_ANTWOORD = "1437";
+
 /* ── HET PROGRAMMA ───────────────────────────────────────────────────────
    Per dag: label voor de tab, de datum (jaar, maand-1, dag) en de items.
    icoon: trein · vliegtuig · koffer · bed · kasteel · bord · rugby ·
@@ -321,9 +327,36 @@ function klimaatBlok(extraRegel){
   const tabs = $("#day-tabs"), dagen = $("#days");
   if (!tabs) return;
   if (!PROGRAMMA_ZICHTBAAR) return;      // het "volgt nog"-blokje staat al in de HTML
-  $(".binnenkort").hidden = true;
-  tabs.hidden = false;
-  dagen.hidden = false;
+
+  const SLEUTEL = "programma-ontgrendeld";
+  const slot = $("#programma-slot"), vraag = $("#slot-vraag"),
+        form = $("#slot-form"), input = $("#slot-input"), fout = $("#slot-fout");
+
+  function toon(){
+    if (slot) slot.hidden = true;
+    tabs.hidden = false;
+    dagen.hidden = false;
+  }
+
+  let ontgrendeld = false;
+  try { ontgrendeld = localStorage.getItem(SLEUTEL) === "ja"; } catch(e){}
+
+  if (ontgrendeld || !slot){
+    toon();
+  } else {
+    vraag.textContent = PROGRAMMA_VRAAG;
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (input.value.trim() === PROGRAMMA_ANTWOORD){
+        try { localStorage.setItem(SLEUTEL, "ja"); } catch(e){}
+        toon();
+      } else {
+        fout.hidden = false;
+        input.focus();
+        input.select();
+      }
+    });
+  }
 
   const alles = [];
   PROGRAMMA.forEach((dag, di) => {

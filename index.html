@@ -147,7 +147,9 @@
         <p class="dry" id="weather-dry"></p>
         <div class="wx-climate bagage">
           <h3>Wat neem je mee?</h3>
-          <p>Niks bijzonders — gewoon je koffertje met spullen erin.</p>
+          <p>Niks bijzonders — gewoon je koffertje met spullen voor twee nachtjes
+            Edinburgh. Op één ding na: je paspoort. Zonder dat wordt het toch
+            een weekendje Schiphol.</p>
           <ul>
             <li><b>Klein stuk handbagage</b> — onder de stoel, max. 45 × 36 × 20 cm</li>
             <li><b>Groot stuk handbagage</b> — max. 56 × 45 × 25 cm</li>
@@ -168,12 +170,18 @@
              width="900" height="672" loading="lazy" decoding="async" data-fallback="hide">
       </figure>
 
-      <div class="binnenkort">
-        <p class="binnenkort__kop">Achter gesloten deuren</p>
-        <p>Twee organisatoren bepalen alles. Geen inspraak, geen stemming,
-          geen beroep mogelijk. Zodra zij eruit zijn, staat het hier.</p>
-        <p class="binnenkort__klein">Wat je alvast mag weten: vrijdag heen, zondag terug,
-          en ergens daartussen een kasteel. De rest hoor je vanzelf.</p>
+      <div class="slot" id="programma-slot">
+        <p class="slot__kop">Op slot</p>
+        <p class="slot__vraag" id="slot-vraag"></p>
+        <form class="slot__form" id="slot-form">
+          <label class="meld__field">
+            <span>Jouw antwoord</span>
+            <input id="slot-input" type="text" inputmode="numeric" autocomplete="off"
+                   placeholder="Jaartal" required>
+          </label>
+          <button class="btn" type="submit">Ontgrendel</button>
+        </form>
+        <p class="slot__fout" id="slot-fout" aria-live="polite" hidden>Net niet — probeer het nog eens.</p>
       </div>
       <div class="tabs" id="day-tabs" role="tablist" aria-label="Dagen" hidden></div>
       <div class="days" id="days" hidden></div>
