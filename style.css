@@ -46,6 +46,7 @@ html{
 }
 
 body{
+  position: relative;                /* zodat de papierkorrel hieronder er absoluut op kan liggen */
   margin: 0;
   background: var(--paper);
   color: var(--ink);
@@ -55,10 +56,14 @@ body{
   -webkit-font-smoothing: antialiased;
 }
 
-/* Papierkorrel over de hele pagina, heel licht */
+/* Papierkorrel over de hele pagina, heel licht. Bewust `absolute` i.p.v.
+   `fixed`: een fixed laag met mix-blend-mode moet op mobiel elk scrollframe
+   opnieuw gecomponeerd worden tegen de bewegende inhoud eronder, wat
+   schokkerig scrollen gaf. Absolute schuift gewoon mee met de pagina en
+   ligt nog steeds boven alle content (zie stijlkeuzes-memory). */
 body::before{
   content: "";
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 90;                       /* over alles heen, onder de lightbox (100) */
   pointer-events: none;
@@ -470,6 +475,8 @@ code{ font-size: .95em; background: var(--paper-deep); padding: 1px 5px; border-
   color: var(--ink-soft);
   transform: rotate(-.6deg);
 }
+.bagage{ margin-top: 18px; }
+.bagage p{ margin: 0 0 10px; font-size: 16px; color: var(--ink-soft); }
 
 /* ─────────────── 4. PROGRAMMA ─────────────── */
 .tabs{

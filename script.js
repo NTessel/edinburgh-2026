@@ -18,7 +18,7 @@ const MANNEN = [
 
 /* Staat het programma al vast? Zet op true zodra je het wilt tonen; de
    tijdlijn hieronder staat klaar. Op false zie je het "volgt nog"-blokje. */
-const PROGRAMMA_ZICHTBAAR = false;
+const PROGRAMMA_ZICHTBAAR = true;
 
 /* ── HET PROGRAMMA ───────────────────────────────────────────────────────
    Per dag: label voor de tab, de datum (jaar, maand-1, dag) en de items.
@@ -28,35 +28,35 @@ const PROGRAMMA = [
   {
     tab: "Vr", datum: [2026, 9, 2], titel: "Vrijdag 2 oktober",
     items: [
-      { tijd: "10:30", icoon: "trein",     titel: "Verzamelen",      desc: "Weidevenne treinstation" },
-      { tijd: "13:10", icoon: "vliegtuig", titel: "Vliegen" },
+      { tijd: "10:20", icoon: "trein",     titel: "Verzamelen",      desc: "Weidevenne treinstation · trein vertrekt 10:40" },
+      { tijd: "13:10", icoon: "vliegtuig", titel: "Vliegen",         desc: "EZY3302" },
       { tijd: "13:45", icoon: "koffer",    titel: "Aankomst Edinburgh" },
       { tijd: "15:00", icoon: "bed",       titel: "Inchecken" },
-      { tijd: "16:00", icoon: "kasteel",   titel: "Bier & whisky",   desc: "Bezoek kasteel" },
+      { tijd: "16:00", icoon: "kasteel",   titel: "Bier, whisky, eten & kasteel" },
       { tijd: "18:00", icoon: "bord",      titel: "Eten" },
       { tijd: "19:00", icoon: "rugby",     titel: "Rugbywedstrijd",  desc: "Aftrap 19:45" },
-      { tijd: "21:00", icoon: "bier",      titel: "Old Town" }
+      { tijd: "21:00", icoon: "bier",      titel: "Old Town",       desc: "De avond en nacht in" }
     ]
   },
   {
     tab: "Za", datum: [2026, 9, 3], titel: "Zaterdag 3 oktober",
     items: [
-      { tijd: "11:00", icoon: "koffie", titel: "Ontbijt" },
-      { tijd: "12:00", icoon: "whisky", titel: "Johnnie Walker tour" },
+      { tijd: "10:30", icoon: "koffie", titel: "Ontbijt",  desc: "Tot 11:00" },
+      { tijd: "12:00", icoon: "whisky", titel: "JW Tour" },
       { tijd: "14:00", icoon: "bord",   titel: "Lunch" },
-      { tijd: "16:00", icoon: "bier",   titel: "Old Town" },
+      { tijd: "16:00", icoon: "bier",   titel: "Old Town",   desc: "Rondslenteren, de stad in" },
       { tijd: "19:00", icoon: "bord",   titel: "Avondeten" },
-      { tijd: "21:00", icoon: "bier",   titel: "Old Town" }
+      { tijd: "21:00", icoon: "bier",   titel: "Old Town",   desc: "Stappen" }
     ]
   },
   {
     tab: "Zo", datum: [2026, 9, 4], titel: "Zondag 4 oktober",
     items: [
       { tijd: "10:00", icoon: "koffie",    titel: "Ontbijt" },
-      { tijd: "12:00", icoon: "bijl",      titel: "Bijlgooien",      desc: "Game of Throws" },
+      { tijd: "12:00", icoon: "bijl",      titel: "Game of Throws", desc: "Bijlgooien" },
       { tijd: "14:00", icoon: "bier",      titel: "Terras / lunch" },
-      { tijd: "16:00", icoon: "koffer",    titel: "Richting vliegveld" },
-      { tijd: "18:20", icoon: "vliegtuig", titel: "Terugvlucht" }
+      { tijd: "16:00", icoon: "koffer",    titel: "Richting vliegveld", desc: "Eerst nog inpakken" },
+      { tijd: "18:20", icoon: "vliegtuig", titel: "Terugvlucht",    desc: "EZY3303" }
     ]
   }
 ];
@@ -71,11 +71,11 @@ const KAART_ZOOM = 13;
    tel:  maakt er een belbare link van
    maps: maakt er een link naar Google/Apple Maps van                    */
 const PRAKTISCH = [
-  { label: "Heenvlucht",   waarde: "Vluchtnr. XX0000 · 13:10 AMS → 13:45 EDI", placeholder: true },
-  { label: "Terugvlucht",  waarde: "Vluchtnr. XX0000 · 18:20 EDI → 20:45 AMS", placeholder: true },
+  { label: "Heenvlucht",   waarde: "EZY3302 · 13:10 AMS → 13:45 EDI (lokale tijd)" },
+  { label: "Terugvlucht",  waarde: "EZY3303 · 18:20 EDI → 20:50 AMS (NL-tijd)" },
+  { label: "Boarding passes", waarde: "Worden uitgedeeld door de organisatie. Iedereen is al ingecheckt." },
   { label: "Hotel",        waarde: "Naam hotel, straat 00, Edinburgh", maps: "Edinburgh city centre hotel", placeholder: true },
   { label: "Hotel telefoon", waarde: "+44 000 000 0000", tel: "+440000000000", placeholder: true },
-  { label: "Tickets",      waarde: "Naam heeft de vliegtickets en de rugbykaarten", placeholder: true },
   { label: "Noodnummer",   waarde: "112 — werkt ook in het VK", tel: "112" },
   { label: "Geld",         waarde: "Ze betalen in pond (£). Overal pinnen of tikken kan; contant is bijna nooit nodig. Reken ruwweg £1 ≈ €1,20." },
   { label: "Stroom",       waarde: "Stekker type G, drie rechthoekige pennen. Neem een adapter mee — één per twee man is genoeg." }
@@ -911,12 +911,6 @@ window.codeHash = codeHash;
   sluit.addEventListener("click", dicht);
   box.addEventListener("click", (e) => { if (e.target === box || e.target === stage) dicht(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.hidden) dicht(); });
-})();
-
-/* ═══════════ 9b. PAKLIJST-ICOON ═══════════ */
-(function paklijstIcoon(){
-  const plek = $("#paklijst-icoon");
-  if (plek) plek.innerHTML = icoonSvg("koffer");
 })();
 
 /* ═══════════ 10. NAVIGATIE ═══════════ */
