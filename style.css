@@ -140,6 +140,7 @@ img{ max-width: 100%; height: auto; display: block; }
   padding-right: 6px;
 }
 .nav__here{
+  min-width: 0;                      /* laat de titel inkrimpen/ellipsen i.p.v. de knoppen wegduwen */
   font-family: var(--font-hand);
   font-size: 24px;
   font-weight: 700;
@@ -149,7 +150,7 @@ img{ max-width: 100%; height: auto; display: block; }
   text-overflow: ellipsis;
   transform: rotate(-1deg);
 }
-.nav__actions{ flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.nav__actions{ flex: 0 0 auto; display: flex; align-items: center; gap: 6px; }
 .nav__fx{
   flex: 0 0 auto;
   display: flex;
@@ -169,6 +170,7 @@ img{ max-width: 100%; height: auto; display: block; }
   transform: rotate(-1deg);
   -webkit-tap-highlight-color: transparent;
 }
+.nav__fx svg{ width: 20px; height: 20px; display: block; }
 .nav__fx:active{ transform: rotate(-1deg) scale(.93); }
 .nav__toggle{
   flex: 0 0 auto;
